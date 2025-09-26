@@ -5,13 +5,12 @@
     <title>Balance Sheet Builder 3.2 (iPhone Optimized)</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        /* --- General & Base Styles --- */
+        /* --- General & Base Styles (No Change) --- */
         body { 
-            /* iPhone Optimization: Prioritize native iOS font for crispness */
             font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
             text-align: center; 
-            background: #f0f3f5; /* Lighter background often looks better on iOS */
-            margin: 0; /* Remove default margin to let content take full width */
+            background: #f0f3f5;
+            margin: 0;
             padding: 20px;
             color: #333; 
             overflow-x: hidden; 
@@ -21,17 +20,17 @@
             display: none; 
             padding: 20px; 
             max-width: 700px; 
-            width: 100%; /* Ensure full-width utilization within padding */
-            box-sizing: border-box; /* Include padding in the element's total width/height */
+            width: 100%;
+            box-sizing: border-box;
             margin: 20px auto; 
             background: white; 
             border: 1px solid #b2dfdb; 
             border-radius: 12px; 
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Softer shadow */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             transition: transform 0.2s ease-out; 
         }
 
-        /* --- Quiz Content --- */
+        /* --- Quiz Content (No Change) --- */
         #quiz-container { margin-top: 25px; }
         #current-concept { 
             font-size: 1.3em; 
@@ -46,7 +45,7 @@
             animation: fadeIn 1s;
         }
 
-        /* --- Progress Bar --- */
+        /* --- Progress Bar (No Change) --- */
         #progress-bar-container {
             width: 100%;
             background: #e0e0e0;
@@ -62,12 +61,12 @@
             transition: width 0.4s ease-in-out;
         }
         
-        /* --- Options & Buttons --- */
+        /* --- Options & Buttons (No Change) --- */
         .option-btn { 
             display: block; 
             width: 100%; 
             padding: 15px 12px; 
-            min-height: 44px; /* iPhone Optimization: Ensures touch target size */
+            min-height: 44px;
             margin: 12px 0; 
             background: #fff; 
             border: 1px solid #ddd; 
@@ -84,7 +83,7 @@
             transform: translateY(-2px);
         }
 
-        /* Feedback Colors & Animations */
+        /* Feedback Colors & Animations (No Change) */
         .correct { 
             background: #a5d6a7; 
             border-color: #388e3c; 
@@ -107,7 +106,7 @@
             border-radius: 5px; 
             cursor: pointer; 
             font-size: 0.9em; 
-            min-height: 44px; /* iPhone Optimization: Ensures touch target size */
+            min-height: 44px;
             transition: background 0.3s, transform 0.1s;
         }
         button:hover:not(:disabled) { background: #004d40; transform: translateY(-1px); }
@@ -156,7 +155,7 @@
                 <li><strong>Task:</strong> Select the correct <strong>Definition</strong> from the options.</li>
                 <li><strong>Scoring:</strong> +10 points for the first correct attempt.</li>
                 <li><strong>Flexibility:</strong> You can press <strong>"Next Concept &gt;&gt;"</strong> at any time.</li>
-                <li><strong>Feedback:</strong> Correct answers flash green; incorrect answers shake the screen!</li>
+                <li><strong>Feedback:</strong> Correct answers flash green; **Incorrect answers show the correct definition and a detailed explanation!**</li>
             </ul>
         </div>
         
@@ -206,31 +205,31 @@
     </div>
 
     <script>
-        // --- Game Data ---
+        // --- Game Data (UPDATED: Added a 'reason' field for enhanced feedback) ---
         const ALL_CONCEPTS = [
-            { concept: "Assets", definition: "Company resources with economic value.", category: "Core", hint: "What the company OWNS." },
-            { concept: "Liabilities", definition: "Obligations owed to outsiders.", category: "Core", hint: "What the company OWES." },
-            { concept: "Shareholders’ Equity", definition: "Residual claim of owners after debts are subtracted.", category: "Core", hint: "The owners' stake in the company." },
-            { concept: "Cash", definition: "Money immediately available for use.", category: "Asset", hint: "The most liquid asset." },
-            { concept: "Accounts Receivable", definition: "Amounts customers owe to the company.", category: "Asset", hint: "Sales made on credit." },
-            { concept: "Inventory", definition: "Goods held for sale.", category: "Asset", hint: "Becomes Cost of Goods Sold when sold." },
-            { concept: "Equipment", definition: "Long-term resources like machinery.", category: "Asset", hint: "A long-term, depreciable resource." },
-            { concept: "Prepaid Expenses", definition: "Payments made in advance for future benefits.", category: "Asset", hint: "A cost paid now, expensed later (e.g., insurance)." },
-            { concept: "Accounts Payable", definition: "Money owed to suppliers.", category: "Liability", hint: "Short-term debt from buying supplies." },
-            { concept: "Notes Payable", definition: "Short-term written promises to pay creditors.", category: "Liability", hint: "A loan, often from a bank." },
-            { concept: "Unearned Revenue", definition: "Cash received for a service you still owe the customer.", category: "Liability", hint: "You owe a service/good in the future." },
-            { concept: "Wages Payable", definition: "Salaries owed to employees but not yet paid.", category: "Liability", hint: "An expense that has accrued." },
-            { concept: "Common Stock", definition: "Capital raised by issuing shares.", category: "Equity", hint: "The initial investment by owners." },
-            { concept: "Retained Earnings", definition: "Profits kept in the company instead of dividends.", category: "Equity", hint: "Cumulative net income less dividends." },
-            { concept: "Dividends Declared", definition: "Profits paid out to shareholders (reduces Equity).", category: "Equity", hint: "A negative entry in Equity." },
-            { concept: "Accumulated Depreciation", definition: "Total wear and tear deducted from an asset's cost.", category: "Asset", hint: "A Contra-Asset account." },
-            { concept: "Goodwill", definition: "Value paid above net assets in an acquisition.", category: "Asset", hint: "An intangible asset." },
-            { concept: "Income Tax Payable", definition: "Tax owed to the government.", category: "Liability", hint: "A statutory obligation." },
-            { concept: "Additional Paid-in Capital", definition: "Money paid by investors above the par value of stock.", category: "Equity", hint: "Part of the contributed capital." },
-            { concept: "Net Working Capital", definition: "Current Assets minus Current Liabilities.", category: "Core", hint: "A measure of short-term liquidity." }
+            { concept: "Assets", definition: "Company resources with economic value.", category: "Core", hint: "What the company OWNS.", reason: "Assets are anything a company owns that can provide future economic benefit, like cash or property." },
+            { concept: "Liabilities", definition: "Obligations owed to outsiders.", category: "Core", hint: "What the company OWES.", reason: "Liabilities represent debts and obligations that a company must pay in the future." },
+            { concept: "Shareholders’ Equity", definition: "Residual claim of owners after debts are subtracted.", category: "Core", hint: "The owners' stake in the company.", reason: "Equity is the portion of assets belonging to the owners, calculated as Assets minus Liabilities." },
+            { concept: "Cash", definition: "Money immediately available for use.", category: "Asset", hint: "The most liquid asset.", reason: "Cash is the most fundamental and liquid asset, ready for immediate transactions." },
+            { concept: "Accounts Receivable", definition: "Amounts customers owe to the company.", category: "Asset", hint: "Sales made on credit.", reason: "This is an asset because it is a future cash inflow the company expects to receive from customers." },
+            { concept: "Inventory", definition: "Goods held for sale.", category: "Asset", hint: "Becomes Cost of Goods Sold when sold.", reason: "Inventory is an asset until it is sold, at which point it becomes an expense (Cost of Goods Sold)." },
+            { concept: "Equipment", definition: "Long-term resources like machinery.", category: "Asset", hint: "A long-term, depreciable resource.", reason: "Equipment is a long-term asset (Plant, Property, & Equipment) used to produce goods or services." },
+            { concept: "Prepaid Expenses", definition: "Payments made in advance for future benefits.", category: "Asset", hint: "A cost paid now, expensed later (e.g., insurance).", reason: "Prepaid Expenses are assets because the company has a right to a future service or benefit (e.g., a year of rent or insurance)." },
+            { concept: "Accounts Payable", definition: "Money owed to suppliers.", category: "Liability", hint: "Short-term debt from buying supplies.", reason: "This is a liability because it is an immediate obligation to pay suppliers for goods or services received on credit." },
+            { concept: "Notes Payable", definition: "Short-term written promises to pay creditors.", category: "Liability", hint: "A loan, often from a bank.", reason: "Notes Payable are formal, written debts, usually involving interest and a specific repayment schedule." },
+            { concept: "Unearned Revenue", definition: "Cash received for a service you still owe the customer.", category: "Liability", hint: "You owe a service/good in the future.", reason: "This is a liability because the company has an obligation (to provide the service/good) until the service is performed." },
+            { concept: "Wages Payable", definition: "Salaries owed to employees but not yet paid.", category: "Liability", hint: "An expense that has accrued.", reason: "Wages Payable is a liability representing accrued labor costs that have been incurred but not yet settled with cash." },
+            { concept: "Common Stock", definition: "Capital raised by issuing shares.", category: "Equity", hint: "The initial investment by owners.", reason: "Common Stock reflects the monetary value the original owners (shareholders) contributed to the company." },
+            { concept: "Retained Earnings", definition: "Profits kept in the company instead of dividends.", category: "Equity", hint: "Cumulative net income less dividends.", reason: "Retained Earnings represent the accumulated profits of the business that have been 'reinvested' into the company." },
+            { concept: "Dividends Declared", definition: "Profits paid out to shareholders (reduces Equity).", category: "Equity", hint: "A negative entry in Equity.", reason: "Dividends reduce the retained earnings portion of equity as they are a distribution of past profits to the owners." },
+            { concept: "Accumulated Depreciation", definition: "Total wear and tear deducted from an asset's cost.", category: "Asset", hint: "A Contra-Asset account.", reason: "This is a contra-asset account that reduces the book value of equipment/property, reflecting its usage over time." },
+            { concept: "Goodwill", definition: "Value paid above net assets in an acquisition.", category: "Asset", hint: "An intangible asset.", reason: "Goodwill is an asset that arises when a company pays a premium to acquire another company, reflecting intangible value like brand reputation." },
+            { concept: "Income Tax Payable", definition: "Tax owed to the government.", category: "Liability", hint: "A statutory obligation.", reason: "This is a mandatory short-term liability representing tax incurred on current period's income but not yet paid to the authorities." },
+            { concept: "Additional Paid-in Capital", definition: "Money paid by investors above the par value of stock.", category: "Equity", hint: "Part of the contributed capital.", reason: "This is the premium received from shareholders when issuing stock for a price higher than the stock's par value." },
+            { concept: "Net Working Capital", definition: "Current Assets minus Current Liabilities.", category: "Core", hint: "A measure of short-term liquidity.", reason: "This is a liquidity measure: a positive number suggests the company has enough short-term assets to cover short-term debts." }
         ];
 
-        // --- Game State Variables ---
+        // --- Game State Variables (No Change) ---
         let playerName = '';
         let conceptsToQuiz = [];
         let currentConceptIndex = 0;
@@ -238,7 +237,7 @@
         let attempts = {}; 
         let leaderboard = JSON.parse(localStorage.getItem('financialLeaderboard')) || [];
 
-        // --- DOM Elements ---
+        // --- DOM Elements (No Change) ---
         const gameScreenEl = document.getElementById('game-screen');
         const conceptEl = document.getElementById('current-concept');
         const optionsContainer = document.getElementById('options-container');
@@ -259,9 +258,13 @@
             return array;
         }
 
+        // UPDATED: Now returns objects with both definition and the concept name for better incorrect feedback
         function getIncorrectDefinitions(correctDef, count = 3) {
-            const allDefs = ALL_CONCEPTS.map(c => c.definition).filter(def => def !== correctDef);
-            return shuffle(allDefs).slice(0, count);
+            const incorrectConcepts = ALL_CONCEPTS.filter(c => c.definition !== correctDef);
+            return shuffle(incorrectConcepts).slice(0, count).map(c => ({ 
+                def: c.definition, 
+                conceptName: c.concept 
+            }));
         }
 
         function createOptions(correctConcept) {
@@ -270,8 +273,8 @@
             const incorrectDefs = getIncorrectDefinitions(correctDef, 3);
             
             let options = [
-                { def: correctDef, isCorrect: true },
-                ...incorrectDefs.map(def => ({ def: def, isCorrect: false }))
+                { def: correctDef, isCorrect: true, conceptName: correctConcept.concept },
+                ...incorrectDefs.map(defObj => ({ def: defObj.def, isCorrect: false, conceptName: defObj.conceptName }))
             ];
 
             shuffle(options);
@@ -280,7 +283,8 @@
                 const btn = document.createElement('button');
                 btn.className = 'option-btn';
                 btn.textContent = option.def;
-                btn.onclick = () => checkAnswer(btn, option.isCorrect, correctConcept);
+                // Pass the incorrect concept name to checkAnswer
+                btn.onclick = () => checkAnswer(btn, option.isCorrect, correctConcept, option.conceptName);
                 optionsContainer.appendChild(btn);
             });
         }
@@ -322,7 +326,7 @@
             void conceptEl.offsetWidth; 
             conceptEl.style.animation = 'fadeIn 1s'; 
             
-            feedbackEl.textContent = '';
+            feedbackEl.innerHTML = ''; // Use innerHTML to handle the rich feedback
             hintBtn.disabled = false;
             
             document.querySelectorAll('.option-btn').forEach(btn => {
@@ -343,19 +347,20 @@
             updateProgressBar();
         }
 
-        function checkAnswer(selectedButton, isCorrect, concept) {
-            const currentAttempt = attempts[concept.concept];
+        // UPDATED: Added incorrectConceptName for detailed feedback
+        function checkAnswer(selectedButton, isCorrect, correctConcept, selectedConceptName) {
+            const currentAttempt = attempts[correctConcept.concept];
             
             if (currentAttempt.answered && currentAttempt.correct) return; 
 
             selectedButton.classList.remove('option-btn');
             selectedButton.disabled = true;
 
-            const correctButton = Array.from(optionsContainer.children).find(btn => btn.textContent === concept.definition);
+            const correctButton = Array.from(optionsContainer.children).find(btn => btn.textContent === correctConcept.definition);
 
             if (isCorrect) {
                 selectedButton.classList.add('correct');
-                feedbackEl.innerHTML = '✅ <strong>CORRECT!</strong> Accounting Equation balanced.';
+                feedbackEl.innerHTML = `✅ <strong>CORRECT!</strong> ${correctConcept.reason}`;
                 
                 if (currentAttempt.firstTry) {
                     currentScore += 10;
@@ -368,18 +373,35 @@
 
             } else {
                 selectedButton.classList.add('incorrect');
-                feedbackEl.innerHTML = '❌ <strong>INCORRECT.</strong> System Error. Try again or move to the next concept.';
+                
+                // ENHANCED FEEDBACK LOGIC
+                // 1. Show the user what their answer actually defined (if it was one of the other concepts)
+                const incorrectConcept = ALL_CONCEPTS.find(c => c.definition === selectedButton.textContent);
+                let incorrectReason = incorrectConcept 
+                    ? `That is the definition for <strong>${incorrectConcept.concept}</strong>.`
+                    : 'That is not a correct definition.';
+                
+                // 2. Show the correct answer's reason
+                feedbackEl.innerHTML = `
+                    ❌ <strong>INCORRECT.</strong> ${incorrectReason}<br>
+                    The correct answer, <strong>${correctConcept.definition}</strong>, is correct because: 
+                    <span style="color: #004d40;">${correctConcept.reason}</span>
+                `;
                 
                 gameScreenEl.style.animation = 'shake 0.5s';
                 setTimeout(() => { gameScreenEl.style.animation = 'none'; }, 500);
                 
+                // Highlight the correct button and disable other incorrect buttons
                 correctButton.classList.add('correct');
                 
                 currentAttempt.firstTry = false;
                 
                 Array.from(optionsContainer.children).forEach(btn => {
                     if (!btn.classList.contains('incorrect') && !btn.classList.contains('correct')) {
-                         btn.disabled = false;
+                         btn.disabled = false; // Keep other unchecked incorrect buttons enabled
+                    } else if (btn !== selectedButton && !btn.classList.contains('correct')) {
+                         // Only the currently selected incorrect button is disabled.
+                         btn.disabled = true;
                     }
                 });
             }
@@ -405,6 +427,7 @@
             loadQuestion();
         }
 
+        // --- End Game Functions (No Change) ---
         function calculateAnalytics() {
             const categories = { 
                 Asset: { total: 0, correct: 0 }, 
