@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Balance Sheet Builder 3.2 (iPhone Optimized)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* --- General & Base Styles --- */
+        body { 
+            /* iPhone Optimization: Prioritize native iOS font for crispness */
+            font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            text-align: center; 
+            background: #f0f3f5; /* Lighter background often looks better on iOS */
+            margin: 0; /* Remove default margin to let content take full width */
+            padding: 20px;
+            color: #333; 
+            overflow-x: hidden; 
+        }
+        h1 { color: #00796b; margin-bottom: 5px; font-size: 1.8em; }
+        .screen { 
+            display: none; 
+            padding: 20px; 
+            max-width: 700px; 
+            width: 100%; /* Ensure full-width utilization within padding */
+            box-sizing: border-box; /* Include padding in the element's total width/height */
+            margin: 20px auto; 
+            background: white; 
+            border: 1px solid #b2dfdb; 
+            border-radius: 12px; 
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Softer shadow */
+            transition: transform 0.2s ease-out; 
+        }
+
+        /* --- Quiz Content --- */
+        #quiz-container { margin-top: 25px; }
+        #current-concept { 
+            font-size: 1.3em; 
+            font-weight: bold; 
+            color: #004d40; 
+            padding: 15px; 
+            background: #e0f7fa; 
+            border-radius: 10px; 
+            margin-bottom: 25px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.5s ease-out;
+            animation: fadeIn 1s;
+        }
+
+        /* --- Progress Bar --- */
+        #progress-bar-container {
+            width: 100%;
+            background: #e0e0e0;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            height: 12px; 
+        }
+        #progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(to right, #4caf50, #00796b);
+            border-radius: 5px;
+            transition: width 0.4s ease-in-out;
+        }
+        
+        /* --- Options & Buttons --- */
+        .option-btn { 
+            display: block; 
+            width: 100%; 
+            padding: 15px 12px; 
+            min-height: 44px; /* iPhone Optimization: Ensures touch target size */
+            margin: 12px 0; 
+            background: #fff; 
+            border: 1px solid #ddd; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            text-align: left;
+            transition: all 0.2s ease-in-out;
+            color: #333; 
+            font-size: 1em; 
+        }
+        .option-btn:hover:not(:disabled) { 
+            background: #f0f0f0; 
+            border-color: #2196f3; 
+            transform: translateY(-2px);
+        }
+
+        /* Feedback Colors & Animations */
+        .correct { 
+            background: #a5d6a7; 
+            border-color: #388e3c; 
+            color: #004d40; 
+            font-weight: bold; 
+            animation: correctFlash 0.3s ease-in-out 3;
+        }
+        .incorrect { 
+            background: #ffcdd2; 
+            border-color: #d32f2f; 
+        }
+        
+        .controls { margin-top: 20px; display: flex; justify-content: space-around; } 
+        button { 
+            padding: 10px 12px; 
+            margin: 5px; 
+            background: #00796b; 
+            color: white; 
+            border: none; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            font-size: 0.9em; 
+            min-height: 44px; /* iPhone Optimization: Ensures touch target size */
+            transition: background 0.3s, transform 0.1s;
+        }
+        button:hover:not(:disabled) { background: #004d40; transform: translateY(-1px); }
+        
+        #next-btn { background: #2196f3; }
+
+        input[type="text"] {
+            padding: 10px;
+            font-size: 1em;
+            width: 80%;
+            max-width: 300px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        
+        /* --- Animations (Unchanged) --- */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-5px); }
+            40%, 80% { transform: translateX(5px); }
+        }
+        @keyframes correctFlash {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- Analytics & Leaderboard (Unchanged) --- */
+        #game-rules ul { padding-left: 25px; } 
+        #analytics-section { text-align: left; }
+        #leaderboard ol { max-width: 90%; } 
+    </style>
+</head>
+<body>
+    <div id="start-screen" class="screen" style="display: block;">
+        <h1>Welcome to Balance Sheet Builder 3.2! 🚀</h1>
+        
+        <div id="game-rules">
+            <h2>Rules of the Game:</h2>
+            <ul>
+                <li><strong>Format:</strong> You'll be presented with one financial <strong>Concept</strong> at a time.</li>
+                <li><strong>Task:</strong> Select the correct <strong>Definition</strong> from the options.</li>
+                <li><strong>Scoring:</strong> +10 points for the first correct attempt.</li>
+                <li><strong>Flexibility:</strong> You can press <strong>"Next Concept &gt;&gt;"</strong> at any time.</li>
+                <li><strong>Feedback:</strong> Correct answers flash green; incorrect answers shake the screen!</li>
+            </ul>
+        </div>
+        
+        <p style="margin-top: 20px;">Please enter your name to start.</p>
+        <input type="text" id="playerName" placeholder="Enter your name">
+        <button onclick="startGame()">Start Quiz</button>
+    </div>
+
+    <div id="game-screen" class="screen">
+        <h1>Balance Sheet Quiz</h1>
+        <div id="progress-bar-container"><div id="progress-bar"></div></div>
+        <p>Question <span id="question-number">1</span> of <span id="total-questions">20</span> | Score: <span id="current-score">0</span></p>
+
+        <div id="quiz-container">
+            <div id="current-concept">Concept Name</div>
+            <div id="options-container">
+                </div>
+            <div id="feedback-message"></div>
+        </div>
+        
+        <div class="controls">
+            <button id="hint-btn" onclick="showHint()">Hint</button>
+            <button id="next-btn" onclick="nextQuestion()">Next Concept &gt;&gt;</button>
+            <button onclick="resetGame()">Reset</button>
+        </div>
+    </div>
+
+    <div id="end-screen" class="screen">
+        <h1>🎉 Quiz Complete!</h1>
+        <p id="end-message"></p>
+        <div style="font-size: 1.5em; margin: 20px 0;">Final Score: <span id="final-score"></span></div>
+        <div id="final-rating" style="font-size: 1.2em;"></div>
+
+        <div id="analytics-section">
+            <h3>Performance Breakdown (First-Try Correct):</h3>
+            <div id="asset-stats" class="category-stat"></div>
+            <div id="liability-stats" class="category-stat"></div>
+            <div id="equity-stats" class="category-stat"></div>
+        </div>
+
+        <div id="leaderboard">
+            <h3>Leaderboard (Last 5 Scores)</h3>
+            <ol id="leaderboard-list"></ol>
+        </div>
+
+        <button onclick="resetGame()">Play Again</button>
+    </div>
+
+    <script>
+        // --- Game Data ---
+        const ALL_CONCEPTS = [
+            { concept: "Assets", definition: "Company resources with economic value.", category: "Core", hint: "What the company OWNS." },
+            { concept: "Liabilities", definition: "Obligations owed to outsiders.", category: "Core", hint: "What the company OWES." },
+            { concept: "Shareholders’ Equity", definition: "Residual claim of owners after debts are subtracted.", category: "Core", hint: "The owners' stake in the company." },
+            { concept: "Cash", definition: "Money immediately available for use.", category: "Asset", hint: "The most liquid asset." },
+            { concept: "Accounts Receivable", definition: "Amounts customers owe to the company.", category: "Asset", hint: "Sales made on credit." },
+            { concept: "Inventory", definition: "Goods held for sale.", category: "Asset", hint: "Becomes Cost of Goods Sold when sold." },
+            { concept: "Equipment", definition: "Long-term resources like machinery.", category: "Asset", hint: "A long-term, depreciable resource." },
+            { concept: "Prepaid Expenses", definition: "Payments made in advance for future benefits.", category: "Asset", hint: "A cost paid now, expensed later (e.g., insurance)." },
+            { concept: "Accounts Payable", definition: "Money owed to suppliers.", category: "Liability", hint: "Short-term debt from buying supplies." },
+            { concept: "Notes Payable", definition: "Short-term written promises to pay creditors.", category: "Liability", hint: "A loan, often from a bank." },
+            { concept: "Unearned Revenue", definition: "Cash received for a service you still owe the customer.", category: "Liability", hint: "You owe a service/good in the future." },
+            { concept: "Wages Payable", definition: "Salaries owed to employees but not yet paid.", category: "Liability", hint: "An expense that has accrued." },
+            { concept: "Common Stock", definition: "Capital raised by issuing shares.", category: "Equity", hint: "The initial investment by owners." },
+            { concept: "Retained Earnings", definition: "Profits kept in the company instead of dividends.", category: "Equity", hint: "Cumulative net income less dividends." },
+            { concept: "Dividends Declared", definition: "Profits paid out to shareholders (reduces Equity).", category: "Equity", hint: "A negative entry in Equity." },
+            { concept: "Accumulated Depreciation", definition: "Total wear and tear deducted from an asset's cost.", category: "Asset", hint: "A Contra-Asset account." },
+            { concept: "Goodwill", definition: "Value paid above net assets in an acquisition.", category: "Asset", hint: "An intangible asset." },
+            { concept: "Income Tax Payable", definition: "Tax owed to the government.", category: "Liability", hint: "A statutory obligation." },
+            { concept: "Additional Paid-in Capital", definition: "Money paid by investors above the par value of stock.", category: "Equity", hint: "Part of the contributed capital." },
+            { concept: "Net Working Capital", definition: "Current Assets minus Current Liabilities.", category: "Core", hint: "A measure of short-term liquidity." }
+        ];
+
+        // --- Game State Variables ---
+        let playerName = '';
+        let conceptsToQuiz = [];
+        let currentConceptIndex = 0;
+        let currentScore = 0;
+        let attempts = {}; 
+        let leaderboard = JSON.parse(localStorage.getItem('financialLeaderboard')) || [];
+
+        // --- DOM Elements ---
+        const gameScreenEl = document.getElementById('game-screen');
+        const conceptEl = document.getElementById('current-concept');
+        const optionsContainer = document.getElementById('options-container');
+        const feedbackEl = document.getElementById('feedback-message');
+        const scoreEl = document.getElementById('current-score');
+        const qNumEl = document.getElementById('question-number');
+        const totalQEl = document.getElementById('total-questions');
+        const hintBtn = document.getElementById('hint-btn');
+        const progressBarEl = document.getElementById('progress-bar');
+        
+        // --- Helper Functions ---
+
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function getIncorrectDefinitions(correctDef, count = 3) {
+            const allDefs = ALL_CONCEPTS.map(c => c.definition).filter(def => def !== correctDef);
+            return shuffle(allDefs).slice(0, count);
+        }
+
+        function createOptions(correctConcept) {
+            optionsContainer.innerHTML = '';
+            const correctDef = correctConcept.definition;
+            const incorrectDefs = getIncorrectDefinitions(correctDef, 3);
+            
+            let options = [
+                { def: correctDef, isCorrect: true },
+                ...incorrectDefs.map(def => ({ def: def, isCorrect: false }))
+            ];
+
+            shuffle(options);
+
+            options.forEach(option => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.textContent = option.def;
+                btn.onclick = () => checkAnswer(btn, option.isCorrect, correctConcept);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function updateProgressBar() {
+            const percentage = (currentConceptIndex / ALL_CONCEPTS.length) * 100;
+            progressBarEl.style.width = `${percentage}%`;
+        }
+
+        // --- Game Logic ---
+
+        function startGame() {
+            playerName = document.getElementById('playerName').value || 'CFO Trainee';
+            document.getElementById('start-screen').style.display = 'none';
+            document.getElementById('game-screen').style.display = 'block';
+
+            currentScore = 0;
+            currentConceptIndex = 0;
+            attempts = {};
+            
+            conceptsToQuiz = shuffle([...ALL_CONCEPTS]);
+            totalQEl.textContent = conceptsToQuiz.length;
+
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            if (currentConceptIndex >= conceptsToQuiz.length) {
+                endGame();
+                return;
+            }
+
+            const currentConcept = conceptsToQuiz[currentConceptIndex];
+            
+            qNumEl.textContent = currentConceptIndex + 1;
+            scoreEl.textContent = currentScore;
+            conceptEl.textContent = currentConcept.concept;
+            conceptEl.style.animation = 'none'; 
+            void conceptEl.offsetWidth; 
+            conceptEl.style.animation = 'fadeIn 1s'; 
+            
+            feedbackEl.textContent = '';
+            hintBtn.disabled = false;
+            
+            document.querySelectorAll('.option-btn').forEach(btn => {
+                btn.className = 'option-btn'; 
+                btn.disabled = false;
+            });
+
+            if (!attempts[currentConcept.concept]) {
+                attempts[currentConcept.concept] = { 
+                    correct: false, 
+                    category: currentConcept.category, 
+                    answered: false, 
+                    firstTry: true 
+                };
+            }
+
+            createOptions(currentConcept);
+            updateProgressBar();
+        }
+
+        function checkAnswer(selectedButton, isCorrect, concept) {
+            const currentAttempt = attempts[concept.concept];
+            
+            if (currentAttempt.answered && currentAttempt.correct) return; 
+
+            selectedButton.classList.remove('option-btn');
+            selectedButton.disabled = true;
+
+            const correctButton = Array.from(optionsContainer.children).find(btn => btn.textContent === concept.definition);
+
+            if (isCorrect) {
+                selectedButton.classList.add('correct');
+                feedbackEl.innerHTML = '✅ <strong>CORRECT!</strong> Accounting Equation balanced.';
+                
+                if (currentAttempt.firstTry) {
+                    currentScore += 10;
+                    scoreEl.textContent = currentScore;
+                    currentAttempt.correct = true; 
+                }
+                
+                Array.from(optionsContainer.children).forEach(btn => btn.disabled = true);
+                currentAttempt.answered = true;
+
+            } else {
+                selectedButton.classList.add('incorrect');
+                feedbackEl.innerHTML = '❌ <strong>INCORRECT.</strong> System Error. Try again or move to the next concept.';
+                
+                gameScreenEl.style.animation = 'shake 0.5s';
+                setTimeout(() => { gameScreenEl.style.animation = 'none'; }, 500);
+                
+                correctButton.classList.add('correct');
+                
+                currentAttempt.firstTry = false;
+                
+                Array.from(optionsContainer.children).forEach(btn => {
+                    if (!btn.classList.contains('incorrect') && !btn.classList.contains('correct')) {
+                         btn.disabled = false;
+                    }
+                });
+            }
+        }
+
+        function showHint() {
+            const currentConcept = conceptsToQuiz[currentConceptIndex];
+            feedbackEl.innerHTML = `💡 <strong>Hint Used!</strong> ${currentConcept.hint}`;
+            hintBtn.disabled = true;
+        }
+
+        function nextQuestion() {
+            if (currentConceptIndex < conceptsToQuiz.length) {
+                const concept = conceptsToQuiz[currentConceptIndex].concept;
+                if (!attempts[concept]) {
+                    attempts[concept] = { correct: false, category: conceptsToQuiz[currentConceptIndex].category, answered: true, firstTry: false };
+                } else {
+                    attempts[concept].answered = true;
+                }
+            }
+            
+            currentConceptIndex++;
+            loadQuestion();
+        }
+
+        function calculateAnalytics() {
+            const categories = { 
+                Asset: { total: 0, correct: 0 }, 
+                Liability: { total: 0, correct: 0 }, 
+                Equity: { total: 0, correct: 0 }, 
+                Core: { total: 0, correct: 0 } 
+            };
+
+            Object.values(attempts).forEach(att => {
+                const cat = att.category;
+                if (categories[cat]) {
+                    categories[cat].total++;
+                    if (att.correct) categories[cat].correct++; 
+                }
+            });
+
+            document.getElementById('asset-stats').innerHTML = `<strong>Assets</strong> (What you own): ${categories.Asset.correct}/${categories.Asset.total} first-try correct.`;
+            document.getElementById('liability-stats').innerHTML = `<strong>Liabilities</strong> (What you owe): ${categories.Liability.correct}/${categories.Liability.total} first-try correct.`;
+            document.getElementById('equity-stats').innerHTML = `<strong>Equity</strong> (Owners' claim): ${categories.Equity.correct}/${categories.Equity.total} first-try correct.`;
+        }
+
+        function updateLeaderboard() {
+            const maxScore = ALL_CONCEPTS.length * 10;
+            
+            leaderboard.push({ name: playerName, score: currentScore, maxScore: maxScore, date: new Date().toLocaleDateString() });
+            
+            leaderboard.sort((a, b) => b.score - a.score);
+            leaderboard = leaderboard.slice(0, 5);
+
+            localStorage.setItem('financialLeaderboard', JSON.stringify(leaderboard));
+
+            const listEl = document.getElementById('leaderboard-list');
+            listEl.innerHTML = '';
+            
+            leaderboard.forEach((entry, index) => {
+                const li = document.createElement('li');
+                li.innerHTML = `<strong>#${index + 1}</strong> - ${entry.name} (${entry.score}/${entry.maxScore}) on ${entry.date}`;
+                listEl.appendChild(li);
+            });
+        }
+
+        function endGame() {
+            document.getElementById('game-screen').style.display = 'none';
+            document.getElementById('end-screen').style.display = 'block';
+
+            const score = currentScore;
+            const maxScore = ALL_CONCEPTS.length * 10;
+            const percentage = Math.round((score / maxScore) * 100);
+
+            let rating = '';
+            if (percentage === 100) rating = 'Balance Sheet Architect 🏆';
+            else if (percentage >= 85) rating = 'Financial Fixer 💼';
+            else if (percentage >= 70) rating = 'Ledger Learner 📚';
+            else rating = 'Try Again! 🔄';
+
+            document.getElementById('end-message').textContent = `Congratulations, ${playerName}! You finished all ${ALL_CONCEPTS.length} concepts.`;
+            document.getElementById('final-score').textContent = `${score}/${maxScore} (${percentage}%)`;
+            document.getElementById('final-rating').textContent = `Rating: ${rating}.`;
+            
+            calculateAnalytics();
+            updateLeaderboard();
+        }
+
+        function resetGame() {
+            document.getElementById('start-screen').style.display = 'block';
+            document.getElementById('game-screen').style.display = 'none';
+            document.getElementById('end-screen').style.display = 'none';
+            document.getElementById('playerName').value = '';
+        }
+        
+        // Initial setup
+        document.addEventListener('DOMContentLoaded', () => {
+             totalQEl.textContent = ALL_CONCEPTS.length;
+             updateProgressBar();
+             if (document.getElementById('leaderboard-list')) {
+                updateLeaderboard();
+             }
+        });
+    </script>
+</body>
+</html>
