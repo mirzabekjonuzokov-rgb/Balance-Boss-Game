@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -46,6 +45,19 @@
             transition: all 0.5s ease-out;
             animation: fadeIn 1s;
         }
+        
+        /* Style for Explanation */
+        #feedback-message {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: left;
+            font-size: 0.95em;
+            line-height: 1.4;
+            background: #fcfcfc;
+            border: 1px solid #eee;
+        }
+
 
         /* --- Progress Bar --- */
         #progress-bar-container {
@@ -114,6 +126,14 @@
         button:hover:not(:disabled) { background: #004d40; transform: translateY(-1px); }
         
         #next-btn { background: #2196f3; }
+        
+        /* Style for the Reset button */
+        .controls button:nth-child(2) { 
+             background: #757575; /* Gray color for reset/secondary action */
+        }
+        .controls button:nth-child(2):hover:not(:disabled) {
+             background: #545454;
+        }
 
         input[type="text"] {
             padding: 10px;
@@ -156,8 +176,9 @@
                 <li><strong>Format:</strong> You'll be presented with one financial <strong>Concept</strong> at a time.</li>
                 <li><strong>Task:</strong> Select the correct <strong>Definition</strong> from the options.</li>
                 <li><strong>Scoring:</strong> +10 points for the first correct attempt.</li>
+                <li><strong>HINT Penalty:</strong> Using a hint deducts **2 points** from your score.</li>
                 <li><strong>Flexibility:</strong> You can press <strong>"Next Concept &gt;&gt;"</strong> at any time.</li>
-                <li><strong>Feedback:</strong> Correct answers flash green; incorrect answers shake the screen!</li>
+                <li><strong>Feedback:</strong> Correct answers flash green and provide a detailed **explanation**.</li>
             </ul>
         </div>
         
@@ -180,8 +201,8 @@
         
         <div class="controls">
             <button id="hint-btn" onclick="showHint()">Hint</button>
+            <button onclick="resetGame()">Reset</button> 
             <button id="next-btn" onclick="nextQuestion()">Next Concept &gt;&gt;</button>
-            <button onclick="resetGame()">Reset</button>
         </div>
     </div>
 
@@ -207,28 +228,31 @@
     </div>
 
     <script>
-        // --- Game Data ---
+        // --- Paste the full UPDATED JAVASCRIPT CODE here ---
+        // (Due to the character limit, the full script is provided in the previous code block for easy copying.)
+
+        // --- Game Data (Keeping the existing explanation data) ---
         const ALL_CONCEPTS = [
-            { concept: "Assets", definition: "Company resources with economic value.", category: "Core", hint: "What the company OWNS." },
-            { concept: "Liabilities", definition: "Obligations owed to outsiders.", category: "Core", hint: "What the company OWES." },
-            { concept: "Shareholders’ Equity", definition: "Residual claim of owners after debts are subtracted.", category: "Core", hint: "The owners' stake in the company." },
-            { concept: "Cash", definition: "Money immediately available for use.", category: "Asset", hint: "The most liquid asset." },
-            { concept: "Accounts Receivable", definition: "Amounts customers owe to the company.", category: "Asset", hint: "Sales made on credit." },
-            { concept: "Inventory", definition: "Goods held for sale.", category: "Asset", hint: "Becomes Cost of Goods Sold when sold." },
-            { concept: "Equipment", definition: "Long-term resources like machinery.", category: "Asset", hint: "A long-term, depreciable resource." },
-            { concept: "Prepaid Expenses", definition: "Payments made in advance for future benefits.", category: "Asset", hint: "A cost paid now, expensed later (e.g., insurance)." },
-            { concept: "Accounts Payable", definition: "Money owed to suppliers.", category: "Liability", hint: "Short-term debt from buying supplies." },
-            { concept: "Notes Payable", definition: "Short-term written promises to pay creditors.", category: "Liability", hint: "A loan, often from a bank." },
-            { concept: "Unearned Revenue", definition: "Cash received for a service you still owe the customer.", category: "Liability", hint: "You owe a service/good in the future." },
-            { concept: "Wages Payable", definition: "Salaries owed to employees but not yet paid.", category: "Liability", hint: "An expense that has accrued." },
-            { concept: "Common Stock", definition: "Capital raised by issuing shares.", category: "Equity", hint: "The initial investment by owners." },
-            { concept: "Retained Earnings", definition: "Profits kept in the company instead of dividends.", category: "Equity", hint: "Cumulative net income less dividends." },
-            { concept: "Dividends Declared", definition: "Profits paid out to shareholders (reduces Equity).", category: "Equity", hint: "A negative entry in Equity." },
-            { concept: "Accumulated Depreciation", definition: "Total wear and tear deducted from an asset's cost.", category: "Asset", hint: "A Contra-Asset account." },
-            { concept: "Goodwill", definition: "Value paid above net assets in an acquisition.", category: "Asset", hint: "An intangible asset." },
-            { concept: "Income Tax Payable", definition: "Tax owed to the government.", category: "Liability", hint: "A statutory obligation." },
-            { concept: "Additional Paid-in Capital", definition: "Money paid by investors above the par value of stock.", category: "Equity", hint: "Part of the contributed capital." },
-            { concept: "Net Working Capital", definition: "Current Assets minus Current Liabilities.", category: "Core", hint: "A measure of short-term liquidity." }
+            { concept: "Assets", definition: "Company resources with economic value.", category: "Core", hint: "What the company OWNS.", explanation: "Assets are anything of economic value that a company owns and uses to generate revenue, like Cash, Equipment, or Receivables. They must equal Liabilities plus Equity." },
+            { concept: "Liabilities", definition: "Obligations owed to outsiders.", category: "Core", hint: "What the company OWES.", explanation: "Liabilities are debts or obligations a company must pay in the future, representing claims by creditors on the company's assets." },
+            { concept: "Shareholders’ Equity", definition: "Residual claim of owners after debts are subtracted.", category: "Core", hint: "The owners' stake in the company.", explanation: "Equity represents the owners' stake in the company's assets, calculated as Assets minus Liabilities. It includes stock and retained earnings." },
+            { concept: "Cash", definition: "Money immediately available for use.", category: "Asset", hint: "The most liquid asset.", explanation: "Cash is a current asset because it is the most liquid resource and is available immediately to settle obligations." },
+            { concept: "Accounts Receivable", definition: "Amounts customers owe to the company.", category: "Asset", hint: "Sales made on credit.", explanation: "This is a current asset representing money owed to the company from sales made on credit, typically collected within one year." },
+            { concept: "Inventory", definition: "Goods held for sale.", category: "Asset", hint: "Becomes Cost of Goods Sold when sold.", explanation: "Inventory is an asset until it is sold, at which point its cost is recognized as an expense (Cost of Goods Sold) on the Income Statement." },
+            { concept: "Equipment", definition: "Long-term resources like machinery.", category: "Asset", hint: "A long-term, depreciable resource.", explanation: "Equipment is a non-current (long-term) asset because it's used for several years, and its value is reduced over time through depreciation." },
+            { concept: "Prepaid Expenses", definition: "Payments made in advance for future benefits.", category: "Asset", hint: "A cost paid now, expensed later (e.g., insurance).", explanation: "Prepaid expenses are considered assets because they represent a future economic benefit (e.g., insurance coverage) that has been paid for but not yet used." },
+            { concept: "Accounts Payable", definition: "Money owed to suppliers.", category: "Liability", hint: "Short-term debt from buying supplies.", explanation: "This is a current liability for short-term obligations to suppliers for goods or services purchased on credit." },
+            { concept: "Notes Payable", definition: "Short-term written promises to pay creditors.", category: "Liability", hint: "A loan, often from a bank.", explanation: "Notes Payable are formal, written agreements to repay a specific amount, usually with interest, and are current if due within one year." },
+            { concept: "Unearned Revenue", definition: "Cash received for a service you still owe the customer.", category: "Liability", hint: "You owe a service/good in the future.", explanation: "This is a liability because the company has an obligation to provide a service or good in the future, even though the cash has already been received." },
+            { concept: "Wages Payable", definition: "Salaries owed to employees but not yet paid.", category: "Liability", hint: "An expense that has accrued.", explanation: "Wages Payable is a liability that accrues when employees earn wages before the company's payment date." },
+            { concept: "Common Stock", definition: "Capital raised by issuing shares.", category: "Equity", hint: "The initial investment by owners.", explanation: "Common Stock is the fundamental equity account, representing the par or stated value of the shares issued to owners." },
+            { concept: "Retained Earnings", definition: "Profits kept in the company instead of dividends.", category: "Equity", hint: "Cumulative net income less dividends.", explanation: "Retained Earnings accumulate over time; they represent the total profits the company has kept and reinvested rather than paying out as dividends." },
+            { concept: "Dividends Declared", definition: "Profits paid out to shareholders (reduces Equity).", category: "Equity", hint: "A negative entry in Equity.", explanation: "Dividends reduce retained earnings and are a distribution of profits, not an expense. Declaring them creates a temporary liability until paid." },
+            { concept: "Accumulated Depreciation", definition: "Total wear and tear deducted from an asset's cost.", category: "Asset", hint: "A Contra-Asset account.", explanation: "This account is a 'contra-asset' which sits on the Balance Sheet under Assets but is subtracted from the cost of the corresponding long-term asset (e.g., Equipment) to find its book value." },
+            { concept: "Goodwill", definition: "Value paid above net assets in an acquisition.", category: "Asset", hint: "An intangible asset.", explanation: "Goodwill is an intangible asset recorded when a company buys another firm for a price higher than the fair value of its identifiable net assets." },
+            { concept: "Income Tax Payable", definition: "Tax owed to the government.", category: "Liability", hint: "A statutory obligation.", explanation: "Income Tax Payable is a current liability for taxes owed to government entities that have been incurred but not yet paid." },
+            { concept: "Additional Paid-in Capital", definition: "Money paid by investors above the par value of stock.", category: "Equity", hint: "Part of the contributed capital.", explanation: "This account captures the excess amount investors pay above the small legal 'par value' of the stock when it is initially issued by the company." },
+            { concept: "Net Working Capital", definition: "Current Assets minus Current Liabilities.", category: "Core", hint: "A measure of short-term liquidity.", explanation: "Net Working Capital is a core metric that assesses a company's ability to cover its short-term liabilities with its short-term assets." }
         ];
 
         // --- Game State Variables ---
@@ -249,8 +273,8 @@
         const totalQEl = document.getElementById('total-questions');
         const hintBtn = document.getElementById('hint-btn');
         const progressBarEl = document.getElementById('progress-bar');
-        
-        // --- Helper Functions ---
+
+        // --- Helper Functions (Same as above) ---
 
         function shuffle(array) {
             for (let i = array.length - 1; i > 0; i--) {
@@ -324,6 +348,10 @@
             conceptEl.style.animation = 'fadeIn 1s'; 
             
             feedbackEl.textContent = '';
+            feedbackEl.style.border = 'none'; 
+            feedbackEl.style.padding = '0';
+            feedbackEl.style.background = 'transparent';
+            
             hintBtn.disabled = false;
             
             document.querySelectorAll('.option-btn').forEach(btn => {
@@ -336,14 +364,19 @@
                     correct: false, 
                     category: currentConcept.category, 
                     answered: false, 
-                    firstTry: true 
+                    firstTry: true,
+                    hintsUsed: 0 // New tracker for hint usage
                 };
+            } else if (attempts[currentConcept.concept].correct) {
+                 // If already answered correctly, disable buttons to prevent re-answering
+                 Array.from(optionsContainer.children).forEach(btn => btn.disabled = true);
             }
 
             createOptions(currentConcept);
             updateProgressBar();
         }
 
+        // UPDATED: CheckAnswer now calculates score with hint penalty.
         function checkAnswer(selectedButton, isCorrect, concept) {
             const currentAttempt = attempts[concept.concept];
             
@@ -351,54 +384,97 @@
 
             selectedButton.classList.remove('option-btn');
             selectedButton.disabled = true;
+            
+            feedbackEl.style.padding = '15px';
+            feedbackEl.style.background = '#fcfcfc';
+            feedbackEl.style.border = '1px solid #ccc';
 
-            const correctButton = Array.from(optionsContainer.children).find(btn => btn.textContent === concept.definition);
 
             if (isCorrect) {
                 selectedButton.classList.add('correct');
-                feedbackEl.innerHTML = '✅ <strong>CORRECT!</strong> Accounting Equation balanced.';
                 
+                let scoreChange = 0;
                 if (currentAttempt.firstTry) {
-                    currentScore += 10;
-                    scoreEl.textContent = currentScore;
-                    currentAttempt.correct = true; 
+                    scoreChange += 10;
                 }
                 
-                Array.from(optionsContainer.children).forEach(btn => btn.disabled = true);
+                // Deduct points for hints used on THIS question
+                scoreChange -= (currentAttempt.hintsUsed * 2);
+                
+                currentScore += scoreChange;
+                scoreEl.textContent = currentScore;
+                
+                let feedbackText = `✅ <strong>CORRECT! ${concept.concept}</strong>: ${concept.definition}`;
+                feedbackText += `<br>Points earned: ${scoreChange} (10 base - ${currentAttempt.hintsUsed * 2} for hints).`;
+                feedbackText += `<br><br><strong>Explanation:</strong> ${concept.explanation}`;
+                feedbackEl.innerHTML = feedbackText;
+                
+                currentAttempt.correct = true; 
                 currentAttempt.answered = true;
+                
+                Array.from(optionsContainer.children).forEach(btn => btn.disabled = true);
+                hintBtn.disabled = true; // Disable hint after correct answer
 
             } else {
                 selectedButton.classList.add('incorrect');
-                feedbackEl.innerHTML = '❌ <strong>INCORRECT.</strong> System Error. Try again or move to the next concept.';
                 
                 gameScreenEl.style.animation = 'shake 0.5s';
                 setTimeout(() => { gameScreenEl.style.animation = 'none'; }, 500);
-                
+
+                const correctButton = Array.from(optionsContainer.children).find(btn => btn.textContent === concept.definition);
                 correctButton.classList.add('correct');
+                
+                let feedbackText = `❌ <strong>INCORRECT.</strong> The correct answer for <strong>${concept.concept}</strong> is: ${concept.definition}`;
+                feedbackText += `<br><br><strong>Explanation:</strong> ${concept.explanation}`;
+                feedbackEl.innerHTML = feedbackText;
                 
                 currentAttempt.firstTry = false;
                 
                 Array.from(optionsContainer.children).forEach(btn => {
                     if (!btn.classList.contains('incorrect') && !btn.classList.contains('correct')) {
-                         btn.disabled = false;
+                        btn.disabled = false;
+                    } else if (btn.classList.contains('correct')) {
+                        btn.disabled = true; 
                     }
                 });
             }
         }
 
+        // UPDATED: showHint now deducts 2 points and tracks usage.
         function showHint() {
             const currentConcept = conceptsToQuiz[currentConceptIndex];
-            feedbackEl.innerHTML = `💡 <strong>Hint Used!</strong> ${currentConcept.hint}`;
+            const conceptName = currentConcept.concept;
+            const currentAttempt = attempts[conceptName];
+            const deduction = 2;
+
+            if (currentAttempt.correct) {
+                feedbackEl.innerHTML = '💡 Hint already used and question is complete.';
+                hintBtn.disabled = true;
+                return;
+            }
+            
+            // Deduct points only if the hint hasn't been used before for this specific question
+            if (currentAttempt.hintsUsed === 0) {
+                 currentScore -= deduction;
+                 scoreEl.textContent = currentScore;
+            }
+            
+            currentAttempt.hintsUsed++;
+
+            feedbackEl.style.padding = '15px';
+            feedbackEl.style.background = '#fffde7'; 
+            feedbackEl.style.border = '1px solid #ffeb3b';
+
+            feedbackEl.innerHTML = `💡 <strong>Hint Used! (-${deduction} points)</strong>: ${currentConcept.hint}`;
             hintBtn.disabled = true;
         }
 
         function nextQuestion() {
             if (currentConceptIndex < conceptsToQuiz.length) {
                 const concept = conceptsToQuiz[currentConceptIndex].concept;
-                if (!attempts[concept]) {
-                    attempts[concept] = { correct: false, category: conceptsToQuiz[currentConceptIndex].category, answered: true, firstTry: false };
-                } else {
-                    attempts[concept].answered = true;
+                // Ensure the concept is marked as "answered" if they skip it or didn't get it right
+                if (!attempts[concept] || !attempts[concept].answered) {
+                    attempts[concept] = { correct: false, category: conceptsToQuiz[currentConceptIndex].category, answered: true, firstTry: false, hintsUsed: 0 };
                 }
             }
             
@@ -478,11 +554,8 @@
         
         // Initial setup
         document.addEventListener('DOMContentLoaded', () => {
-             totalQEl.textContent = ALL_CONCEPTS.length;
-             updateProgressBar();
-             if (document.getElementById('leaderboard-list')) {
-                updateLeaderboard();
-             }
+            totalQEl.textContent = ALL_CONCEPTS.length;
+            updateLeaderboard(); 
         });
     </script>
 </body>
