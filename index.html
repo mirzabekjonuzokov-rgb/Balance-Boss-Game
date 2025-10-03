@@ -2,561 +2,925 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Balance Sheet Builder 3.2 (iPhone Optimized)</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The CPA Climb: Staff Auditor - Public Accounting Game</title>
     <style>
-        /* --- General & Base Styles --- */
-        body { 
-            /* iPhone Optimization: Prioritize native iOS font for crispness */
-            font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
-            text-align: center; 
-            background: #f0f3f5; /* Lighter background often looks better on iOS */
-            margin: 0; /* Remove default margin to let content take full width */
+        /* New & Improved Color Scheme */
+        :root {
+            --primary-color: #002D62; /* Deep Navy Blue (Corporate) */
+            --secondary-color: #FFC72C; /* Gold/Yellow (Accent/Success) */
+            --text-color: #333;
+            --light-bg: #F5F7FA; /* Light Blue-Gray Background */
+            --white: #ffffff;
+            --correct-color: #00A65A; /* Green for Success */
+            --wrong-color: #D62828; /* Red for Error */
+            --shadow: 0 8px 15px rgba(0, 0, 0, 0.1); /* Deeper shadow */
+            --nav-bg: #EAEFF4; /* Lighter background for nav */
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-bg);
+            color: var(--text-color);
+            margin: 0;
             padding: 20px;
-            color: #333; 
-            overflow-x: hidden; 
-        }
-        h1 { color: #00796b; margin-bottom: 5px; font-size: 1.8em; }
-        .screen { 
-            display: none; 
-            padding: 20px; 
-            max-width: 700px; 
-            width: 100%; /* Ensure full-width utilization within padding */
-            box-sizing: border-box; /* Include padding in the element's total width/height */
-            margin: 20px auto; 
-            background: white; 
-            border: 1px solid #b2dfdb; 
-            border-radius: 12px; 
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Softer shadow */
-            transition: transform 0.2s ease-out; 
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
         }
 
-        /* --- Quiz Content --- */
-        #quiz-container { margin-top: 25px; }
-        #current-concept { 
-            font-size: 1.3em; 
-            font-weight: bold; 
-            color: #004d40; 
-            padding: 15px; 
-            background: #e0f7fa; 
-            border-radius: 10px; 
-            margin-bottom: 25px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: all 0.5s ease-out;
-            animation: fadeIn 1s;
-        }
-        
-        /* Style for Explanation */
-        #feedback-message {
-            margin-top: 15px;
-            padding: 15px;
-            border-radius: 8px;
-            text-align: left;
-            font-size: 0.95em;
-            line-height: 1.4;
-            background: #fcfcfc;
-            border: 1px solid #eee;
-        }
-
-
-        /* --- Progress Bar --- */
-        #progress-bar-container {
+        .game-wrapper {
+            display: flex;
             width: 100%;
-            background: #e0e0e0;
-            border-radius: 5px;
-            margin-bottom: 15px;
-            height: 12px; 
+            max-width: 1300px; /* Wider layout */
         }
-        #progress-bar {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(to right, #4caf50, #00796b);
-            border-radius: 5px;
-            transition: width 0.4s ease-in-out;
+
+        .game-container {
+            flex-grow: 1;
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            padding: 40px;
+            margin-right: 30px; 
+            border-top: 5px solid var(--primary-color);
         }
         
-        /* --- Options & Buttons --- */
-        .option-btn { 
-            display: block; 
-            width: 100%; 
-            padding: 15px 12px; 
-            min-height: 44px; /* iPhone Optimization: Ensures touch target size */
-            margin: 12px 0; 
-            background: #fff; 
-            border: 1px solid #ddd; 
-            border-radius: 8px; 
-            cursor: pointer; 
+        /* --- Navigation Panel --- */
+        .nav-panel {
+            width: 280px; /* Slightly wider nav */
+            background: var(--nav-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 25px 20px;
+            align-self: flex-start;
+            position: sticky;
+            top: 20px;
+            border-left: 4px solid var(--secondary-color);
+        }
+
+        .nav-panel h3 {
+            margin-top: 0;
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--secondary-color);
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+        }
+
+        .nav-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr); /* More columns for compact look */
+            gap: 10px;
+        }
+
+        .nav-button {
+            padding: 10px 0;
+            border: none;
+            border-radius: 6px;
+            background-color: var(--white);
+            color: var(--primary-color);
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9em;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            transition: all 0.2s;
+        }
+
+        .nav-button:hover:not(.current):not(.answered) {
+            background-color: #CFD8DC;
+        }
+        
+        .nav-button.current {
+            background-color: var(--secondary-color);
+            color: var(--primary-color);
+            font-weight: bold;
+            transform: scale(1.05);
+            border: 2px solid var(--primary-color);
+        }
+
+        .nav-button.answered {
+            background-color: var(--correct-color);
+            color: var(--white);
+            border: 1px solid var(--correct-color);
+        }
+
+        .nav-button.skipped {
+            background-color: var(--wrong-color);
+            color: var(--white);
+            border: 1px solid var(--wrong-color);
+        }
+
+        /* --- Header & Scoreboard --- */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: var(--primary-color);
+            margin: 0;
+            font-size: 2.2em;
+            border-left: 5px solid var(--secondary-color);
+            padding-left: 15px;
+        }
+
+        .score-board {
+            text-align: right;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+
+        .score-board span {
+            display: block;
+            font-size: 1.1em;
+            color: var(--text-color);
+        }
+
+        #current-score {
+            font-size: 1.8em;
+            color: var(--correct-color);
+            font-weight: 800;
+        }
+
+        /* --- Welcome Screen Styles --- */
+        #welcome-screen {
+            padding: 40px 20px;
+            text-align: center;
+            background-color: var(--nav-bg);
+            border-radius: 10px;
+        }
+        #welcome-screen h2 {
+            color: var(--primary-color);
+            font-size: 2.4em;
+            margin-bottom: 25px;
+        }
+        .rules-box {
+            background-color: var(--white);
+            border: 1px solid var(--secondary-color);
+            padding: 20px;
+            margin: 25px 0;
             text-align: left;
-            transition: all 0.2s ease-in-out;
-            color: #333; 
-            font-size: 1em; 
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
         }
-        .option-btn:hover:not(:disabled) { 
-            background: #f0f0f0; 
-            border-color: #2196f3; 
+        .rules-box h3 {
+            color: var(--secondary-color);
+            margin-top: 0;
+        }
+        #player-name-input {
+            padding: 12px;
+            width: 70%;
+            border: 2px solid var(--primary-color);
+            border-radius: 6px;
+            font-size: 1.1em;
+            margin-top: 15px;
+        }
+        
+        /* --- Question Area --- */
+        .question-box h2 {
+            margin-top: 0;
+            color: var(--primary-color);
+            font-size: 1.8em;
+            padding-bottom: 5px;
+            border-bottom: 1px dashed #ccc;
+        }
+
+        .question-text {
+            background-color: #EAEFF4;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            line-height: 1.7;
+            font-size: 1.1em;
+            border-left: 5px solid var(--secondary-color);
+        }
+
+        .options-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .options-list li {
+            margin-bottom: 12px;
+        }
+
+        .option-button {
+            display: block;
+            width: 100%;
+            padding: 18px 25px;
+            text-align: left;
+            border: 2px solid var(--primary-color);
+            border-radius: 8px;
+            background-color: var(--white);
+            color: var(--primary-color);
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .option-button:hover:not(.disabled) {
+            background-color: var(--primary-color);
+            color: var(--white);
             transform: translateY(-2px);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1);
         }
 
-        /* Feedback Colors & Animations */
-        .correct { 
-            background: #a5d6a7; 
-            border-color: #388e3c; 
-            color: #004d40; 
-            font-weight: bold; 
-            animation: correctFlash 0.3s ease-in-out 3;
-        }
-        .incorrect { 
-            background: #ffcdd2; 
-            border-color: #d32f2f; 
-        }
-        
-        .controls { margin-top: 20px; display: flex; justify-content: space-around; } 
-        button { 
-            padding: 10px 12px; 
-            margin: 5px; 
-            background: #00796b; 
-            color: white; 
-            border: none; 
-            border-radius: 5px; 
-            cursor: pointer; 
-            font-size: 0.9em; 
-            min-height: 44px; /* iPhone Optimization: Ensures touch target size */
-            transition: background 0.3s, transform 0.1s;
-        }
-        button:hover:not(:disabled) { background: #004d40; transform: translateY(-1px); }
-        
-        #next-btn { background: #2196f3; }
-        
-        /* Style for the Reset button */
-        .controls button:nth-child(2) { 
-             background: #757575; /* Gray color for reset/secondary action */
-        }
-        .controls button:nth-child(2):hover:not(:disabled) {
-             background: #545454;
+        .option-button.correct {
+            background-color: var(--correct-color);
+            color: var(--white);
+            border-color: var(--correct-color);
         }
 
-        input[type="text"] {
-            padding: 10px;
+        .option-button.incorrect {
+            background-color: var(--wrong-color);
+            color: var(--white);
+            border-color: var(--wrong-color);
+        }
+
+        .disabled {
+            pointer-events: none;
+            opacity: 0.8;
+            box-shadow: none;
+        }
+
+        /* --- Task Area --- */
+        .task-area input[type="text"] {
+            width: 50%;
+            padding: 12px;
+            border: 2px solid var(--primary-color);
+            border-radius: 6px;
+            font-size: 1.1em;
+            margin-right: 15px;
+        }
+        
+        #task-submit {
+            width: auto !important;
+        }
+
+        /* --- Controls --- */
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 25px;
+            border-top: 2px dashed #ccc;
+            margin-top: 30px;
+        }
+        
+        #next-button, #start-game-button {
+            padding: 15px 35px;
+            background-color: var(--primary-color);
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.3em;
+            font-weight: 700;
+            box-shadow: 0 5px 0px #001A36;
+            transition: all 0.1s;
+        }
+
+        #next-button:hover, #start-game-button:hover {
+            background-color: #001A36;
+            transform: translateY(1px);
+            box-shadow: 0 4px 0px #001A36;
+        }
+
+
+        #hint-button {
+            padding: 12px 20px;
+            background-color: var(--secondary-color);
+            color: var(--primary-color);
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
             font-size: 1em;
-            width: 80%;
-            max-width: 300px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        
-        /* --- Animations (Unchanged) --- */
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            20%, 60% { transform: translateX(-5px); }
-            40%, 80% { transform: translateX(5px); }
-        }
-        @keyframes correctFlash {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            transition: background-color 0.2s;
+            box-shadow: 0 3px 0px #CC9C00;
         }
 
-        /* --- Analytics & Leaderboard (Unchanged) --- */
-        #game-rules ul { padding-left: 25px; } 
-        #analytics-section { text-align: left; }
-        #leaderboard ol { max-width: 90%; } 
+        #hint-button:hover {
+            background-color: #CC9C00;
+            transform: translateY(1px);
+            box-shadow: 0 2px 0px #CC9C00;
+        }
+        
+        .hint-message {
+            margin-top: 15px;
+            padding: 12px;
+            background-color: #FFF8E1;
+            border-left: 5px solid var(--secondary-color);
+            color: var(--text-color);
+            border-radius: 4px;
+        }
     </style>
 </head>
 <body>
-    <div id="start-screen" class="screen" style="display: block;">
-        <h1>Welcome to Balance Sheet Builder 3.2! 🚀</h1>
+
+<div class="game-wrapper">
+    
+    <div class="game-container">
         
-        <div id="game-rules">
-            <h2>Rules of the Game:</h2>
-            <ul>
-                <li><strong>Format:</strong> You'll be presented with one financial <strong>Concept</strong> at a time.</li>
-                <li><strong>Task:</strong> Select the correct <strong>Definition</strong> from the options.</li>
-                <li><strong>Scoring:</strong> +10 points for the first correct attempt.</li>
-                <li><strong>HINT Penalty:</strong> Using a hint deducts **2 points** from your score.</li>
-                <li><strong>Flexibility:</strong> You can press <strong>"Next Concept &gt;&gt;"</strong> at any time.</li>
-                <li><strong>Feedback:</strong> Correct answers flash green and provide a detailed **explanation**.</li>
-            </ul>
+        <div class="header">
+            <h1>The CPA Climb: Staff Auditor</h1>
+            <div class="score-board">
+                <span>Trainee: <strong id="player-name">Guest</strong></span>
+                <span>Q: <span id="q-number">0</span> / 25</span>
+                <span class="rank-title">Rank: <strong id="current-rank-title">Staff I</strong></span>
+                <span>Score: <strong id="current-score">100</strong> Pts</span>
+            </div>
         </div>
-        
-        <p style="margin-top: 20px;">Please enter your name to start.</p>
-        <input type="text" id="playerName" placeholder="Enter your name">
-        <button onclick="startGame()">Start Quiz</button>
+
+        <div id="welcome-screen">
+            <h2>Welcome to the Audit Engagement! 🚀</h2>
+
+            <p style="font-size: 1.1em;">Enter your name to begin your journey up the CPA Ladder.</p>
+            <input type="text" id="player-name-input" placeholder="Your Name" value="Trainee CPA" maxlength="30">
+
+            <div class="rules-box">
+                <h3>Engagement Rules 📝</h3>
+                <ol>
+                    <li>You begin with a starting score of **100 Points**.</li>
+                    <li>**Correct Answer:** Gain **+10 Points**.</li>
+                    <li>**Incorrect/Skipped Answer:** Lose **-5 Points**.</li>
+                    <li>**Use a Hint:** Lose **-2 Points** instantly.</li>
+                    <li>The 'NEXT' button acts as a **Skip** button until you answer, incurring a **-5 point penalty** if used.</li>
+                    <li>You can **navigate** to any completed/skipped question via the side panel.</li>
+                    <li>**Calculus/Calculation** questions require a numerical answer (rounded to the nearest whole number unless specified).</li>
+                </ol>
+            </div>
+
+            <button id="start-game-button">START ENGAGEMENT ></button>
+        </div>
+
+        <div id="game-area" style="display: none;">
+            </div>
+
+        <div id="result-area" class="result-screen" style="display: none;">
+            </div>
+
+        <div class="controls" id="controls-area" style="display: none;">
+            <button id="hint-button">HINT (Deduct 2 Pts)</button>
+            <button id="next-button">SKIP ></button>
+        </div>
+
     </div>
 
-    <div id="game-screen" class="screen">
-        <h1>Balance Sheet Quiz</h1>
-        <div id="progress-bar-container"><div id="progress-bar"></div></div>
-        <p>Question <span id="question-number">1</span> of <span id="total-questions">20</span> | Score: <span id="current-score">0</span></p>
+    <div class="nav-panel" id="nav-panel" style="display: none;">
+        <h3>Question Navigation</h3>
+        <div class="nav-grid" id="nav-grid">
+            </div>
+        <p style="font-size: 0.8em; margin-top: 15px;">
+            <span style="color: var(--correct-color);">■</span> Answered &nbsp;
+            <span style="color: var(--wrong-color);">■</span> Skipped/Incomplete
+        </p>
+    </div>
 
-        <div id="quiz-container">
-            <div id="current-concept">Concept Name</div>
-            <div id="options-container">
-                </div>
-            <div id="feedback-message"></div>
-        </div>
+</div>
+
+<script>
+    // --- Game Data ---
+    const QUESTIONS = [
+        // -------------------------
+        // SECTION 1: AUDIT FUNDAMENTALS (MCQ) - 10 Questions
+        // -------------------------
+        { 
+            type: 'mcq', concept: 'Materiality', 
+            question: "The concept of 'Materiality' in an audit primarily relates to:",
+            options: ["The number of employees in the client's accounting department.", "The magnitude of an omission or misstatement that would likely influence the judgment of a reasonable user.", "The legal jurisdiction of the client.", "The average cost of a firm's audit hour."],
+            answer: "The magnitude of an omission or misstatement that would likely influence the judgment of a reasonable user.",
+            hint: "Materiality is a threshold. Think about what a financial statement user cares about."
+        },
+        { 
+            type: 'mcq', concept: 'Audit Assertions', 
+            question: "Which audit assertion is the auditor testing when checking if all recorded sales transactions actually occurred and are not fictitious?",
+            options: ["Completeness", "Valuation and Allocation", "Rights and Obligations", "Existence or Occurrence"],
+            answer: "Existence or Occurrence",
+            hint: "The question is asking if the recorded transaction truly 'exists'."
+        },
+        { 
+            type: 'mcq', concept: 'Internal Control', 
+            question: "The segregation of duties principle requires that the following functions should be performed by different people, *except*:",
+            options: ["Authorization", "Recording", "Custody of Assets", "Planning and Budgeting"],
+            answer: "Planning and Budgeting",
+            hint: "Segregation of duties focuses on the three major transactional roles: Authorization, Recording, and Custody."
+        },
+        { 
+            type: 'mcq', concept: 'Audit Risk Model', 
+            question: "According to the Audit Risk Model ($AR = IR \\times CR \\times DR$), if the auditor assesses both Inherent Risk (IR) and Control Risk (CR) as high, what must the auditor do to achieve an acceptable level of Audit Risk (AR)?",
+            options: ["Increase Detection Risk (DR)", "Decrease Detection Risk (DR)", "Increase Materiality", "Decrease Substantive Testing"],
+            answer: "Decrease Detection Risk (DR)",
+            hint: "If the risk of misstatement is high internally (IR * CR), the auditor must do MORE work to lower their chance of missing it (DR)."
+        },
+        { 
+            type: 'mcq', concept: 'Revenue Recognition (ASC 606)', 
+            question: "Which of the following is the final step in the five-step model for Revenue Recognition (ASC 606)?",
+            options: ["Identify the contract with the customer.", "Identify the performance obligations in the contract.", "Allocate the transaction price to the performance obligations.", "Recognize revenue when (or as) the entity satisfies a performance obligation."],
+            answer: "Recognize revenue when (or as) the entity satisfies a performance obligation.",
+            hint: "The last step is always the payoff, or the actual recognition of the revenue."
+        },
+        { 
+            type: 'mcq', concept: 'Cash Basis vs. Accrual Basis', 
+            question: "Under the Accrual Basis of Accounting, revenue is recognized when:",
+            options: ["Cash is received from the customer.", "The related expense is incurred.", "The performance obligation is satisfied.", "The sales order is placed."],
+            answer: "The performance obligation is satisfied.",
+            hint: "Accrual accounting ignores the timing of cash and focuses on earning/incurring."
+        },
+        { 
+            type: 'mcq', concept: 'Confirmations', 
+            question: "A 'Positive Confirmation' for Accounts Receivable is considered a more reliable audit procedure than a 'Negative Confirmation' because:",
+            options: ["It is less expensive to perform.", "It requires a response in all circumstances, providing evidence of existence.", "It is only sent to customers with large balances.", "It is the only way to test the valuation assertion."],
+            answer: "It requires a response in all circumstances, providing evidence of existence.",
+            hint: "The key is in the 'Positive' nature—it requires a specific action (a reply) from the respondent to be valid."
+        },
+        { 
+            type: 'mcq', concept: 'Fixed Assets', 
+            question: "When auditing Fixed Assets, the auditor is most likely to vouch a sample of *additions* to which document to test the 'Existence' assertion?",
+            options: ["Depreciation schedules.", "Sales invoices.", "Vendor invoices and title documents.", "Shipping documents."],
+            answer: "Vendor invoices and title documents.",
+            hint: "To prove an asset exists and is owned, you need the documentation of the purchase and ownership."
+        },
+        { 
+            type: 'mcq', concept: 'Working Papers', 
+            question: "Which of the following describes the primary purpose of audit working papers?",
+            options: ["To assist the client in preparing financial statements.", "To provide a basis for the firm's partner compensation.", "To document the procedures performed, evidence obtained, and conclusions reached.", "To publicly disclose the audit findings."],
+            answer: "To document the procedures performed, evidence obtained, and conclusions reached.",
+            hint: "The working papers are the official record of the *work* done by the auditor."
+        },
+        { 
+            type: 'mcq', concept: 'Ethical Standards', 
+            question: "Maintaining an attitude that includes a questioning mind and a critical assessment of audit evidence is defined as:",
+            options: ["Due professional care", "Independence in fact", "Professional judgment", "Professional skepticism"],
+            answer: "Professional skepticism",
+            hint: "It’s about being wary and always questioning, not just careful."
+        },
+        // -------------------------
+        // SECTION 2: BASIC TAXATION (MCQ) - 5 Questions
+        // -------------------------
+        { 
+            type: 'mcq', concept: 'Taxable Income', 
+            question: "Which of the following is typically a *tax credit* (direct reduction of tax liability) rather than a *tax deduction* (reduction of taxable income)?",
+            options: ["Interest on a home mortgage", "Charitable contributions", "Child and Dependent Care expenses", "State and local taxes (SALT)"],
+            answer: "Child and Dependent Care expenses",
+            hint: "Credits are dollar-for-dollar reductions and are generally reserved for specific social or economic incentives."
+        },
+        { 
+            type: 'mcq', concept: 'Deductibility', 
+            question: "For a calendar year corporation, a prepayment made on December 28th for next year's rent (January and February) should be generally:",
+            options: ["Fully deductible in the current year.", "Deductible only in the next year (following the 12-month rule).", "50% deductible in the current year and 50% in the next.", "Not deductible until paid in cash."],
+            answer: "Deductible only in the next year (following the 12-month rule).",
+            hint: "Tax law generally requires an expenditure to be deductible when the benefit is fully used (Accrual/Economic performance), though there are exceptions like the 12-month rule for prepayments."
+        },
+        { 
+            type: 'mcq', concept: 'Basis', 
+            question: "If an individual purchases stock for $5,000, and later sells it for $7,500, what is the *tax basis* used to calculate the gain?",
+            options: ["$7,500 (Selling Price)", "$2,500 (The Gain)", "$5,000 (Cost)", "$0"],
+            answer: "$5,000 (Cost)",
+            hint: "Tax Basis is generally your cost in the property."
+        },
+        { 
+            type: 'mcq', concept: 'Capital Assets', 
+            question: "Which of the following is generally *NOT* considered a capital asset for tax purposes?",
+            options: ["Personal car", "A collectible painting held for investment", "Inventory held for sale to customers", "Stocks and bonds"],
+            answer: "Inventory held for sale to customers",
+            hint: "Capital assets are usually defined by what they *exclude*—things like inventory, accounts receivable, and property used in a trade or business."
+        },
+        { 
+            type: 'mcq', concept: 'Tax Periods', 
+            question: "The vast majority of individual income taxpayers in the US operate under which tax year?",
+            options: ["Fiscal year", "Calendar year", "52-53 week year", "Statutory year"],
+            answer: "Calendar year",
+            hint: "Think about when the typical person files their Form 1040."
+        },
+        // -------------------------
+        // SECTION 3: FINANCIAL REPORTING (MCQ) - 5 Questions
+        // -------------------------
+        { 
+            type: 'mcq', concept: 'Lease Accounting (ASC 842)', 
+            question: "Under the new lease standard (ASC 842), a lessee must generally recognize which of the following on its balance sheet for most leases?",
+            options: ["Lease Expense", "Right-of-Use (ROU) Asset and Lease Liability", "Contingent Rent Asset", "Lease Receivable and Unearned Revenue"],
+            answer: "Right-of-Use (ROU) Asset and Lease Liability",
+            hint: "ASC 842's main goal was to bring operating leases onto the balance sheet using a specific asset and liability."
+        },
+        { 
+            type: 'mcq', concept: 'Statement of Cash Flows', 
+            question: "The payment of a cash dividend would be classified in which section of the Statement of Cash Flows?",
+            options: ["Operating Activities", "Investing Activities", "Financing Activities", "Non-Cash Activities"],
+            answer: "Financing Activities",
+            hint: "Financing activities involve transactions with owners (stock, dividends) and creditors (debt, repayments)."
+        },
+        { 
+            type: 'mcq', concept: 'Inventory Valuation', 
+            question: "Which GAAP principle requires that inventory should be reported at the lower of cost and net realizable value (LCNRV)?",
+            options: ["The Going Concern principle", "The Conservatism principle", "The Revenue Recognition principle", "The Full Disclosure principle"],
+            answer: "The Conservatism principle",
+            hint: "Conservatism is the idea of anticipating losses but not gains."
+        },
+        { 
+            type: 'mcq', concept: 'Non-Cash Transactions', 
+            question: "Which of the following is a classic example of a significant *non-cash* transaction that must be disclosed?",
+            options: ["Issuing stock to pay off a bond.", "Paying cash for a new piece of equipment.", "Recording depreciation expense.", "Writing off an uncollectible account."],
+            answer: "Issuing stock to pay off a bond.",
+            hint: "This is a major financing and investing event that doesn't involve cash but affects the financial position."
+        },
+        { 
+            type: 'mcq', concept: 'Balance Sheet Classification', 
+            question: "For a typical company, Accounts Payable is classified as:",
+            options: ["Non-Current Asset", "Current Liability", "Non-Current Liability", "Equity"],
+            answer: "Current Liability",
+            hint: "Accounts Payable represents short-term debts to vendors/suppliers, typically due within a year."
+        },
+        // -------------------------
+        // SECTION 4: CALCULATION/HIGHER-LEVEL TASKS - 5 Questions
+        // -------------------------
+        {
+            type: 'task', concept: 'Present Value of an Annuity',
+            question: "Calculate the **Present Value** of an annuity that pays **$1,000** at the end of each year for **5 years**, assuming a discount rate of **8%**. (Round to the nearest whole dollar).",
+            answer: "3993", // $1,000 * PVOA factor of 3.99271 = 3992.71
+            hint: "Use the Present Value of an Ordinary Annuity formula or a factor table: $PV = PMT \\times [\\frac{1 - (1+r)^{-n}}{r}]$"
+        },
+        {
+            type: 'task', concept: 'MACRS Tax Depreciation',
+            question: "A company purchased equipment for **$100,000**. The equipment is 7-year MACRS property. Using the **200% declining balance** method, calculate the **Year 1 depreciation deduction**. (MACRS Half-Year Convention factor for 7-year property is 14.29%). Round to nearest whole dollar.",
+            answer: "14290", // $100,000 * 14.29% = 14,290
+            hint: "MACRS Year 1 depreciation for 200% DB uses the straight-line rate (1/7 * 2 = 28.57%) multiplied by the Half-Year Convention (1/2), resulting in the given factor (14.29%)."
+        },
+        {
+            type: 'task', concept: 'Effective Interest Rate Method',
+            question: "A company issued a **$100,000** bond with a **5% stated rate** when the market rate was **6%**. The first interest payment is **$5,000** ($100,000 * 5%). Using the Effective Interest Method, calculate the amount of **interest expense** to be recorded in the first period, assuming the bond was issued at **$95,788** (rounded). (Round to the nearest whole dollar).",
+            answer: "5747", // $95,788 * 6% = $5,747.28
+            hint: "Interest Expense is calculated by multiplying the **Carrying Value** of the bond (Issue Price) by the **Market Interest Rate**."
+        },
+        {
+            type: 'task', concept: 'Bad Debt Percentage of Sales',
+            question: "Total credit sales for the year were **$500,000**. Management estimates that **3%** of credit sales will be uncollectible. The Allowance for Doubtful Accounts had a beginning balance of **$500** (credit). Calculate the **Bad Debt Expense** for the year.",
+            answer: "15000", // $500,000 * 3% = $15,000 (Expense calculation ignores the beginning balance)
+            hint: "The percentage of sales method calculates the required **expense**. The existing allowance balance is irrelevant to this calculation."
+        },
+        {
+            type: 'task', concept: 'Basic Time Value of Money (PV)',
+            question: "Calculate the **Present Value** of a single cash flow of **$20,000** to be received in **3 years**, assuming a discount rate of **7%**. (Round to the nearest whole dollar).",
+            answer: "16326", // $20,000 * (1 / (1 + 0.07)^3) = $16,325.95
+            hint: "Use the Present Value of a Single Sum formula: $PV = FV \\times (1+r)^{-n}$"
+        }
+    ];
+
+    // --- Game Variables ---
+    let playerName = "Guest";
+    let currentQuestionIndex = 0;
+    let currentScore = 100;
+    let hintUsed = false;
+    // status: 0 = Unattempted, 1 = Skipped/Incomplete, 2 = Answered Correctly, 3 = Answered Incorrectly
+    const questionStatuses = Array(QUESTIONS.length).fill(0); 
+
+    // The Ranking System
+    const RANKS = [
+        { title: "Staff I", minScore: 0 },
+        { title: "Staff II", minScore: 200 },
+        { title: "Senior I", minScore: 500 },
+        { title: "Manager", minScore: 1000 },
+        { title: "Senior Manager", minScore: 1500 },
+        { title: "Partner", minScore: 2000 }
+    ];
+
+    // --- DOM Elements ---
+    let welcomeScreen;
+    let gameArea;
+    let resultArea;
+    let scoreDisplay;
+    let rankTitleDisplay;
+    let qNumberDisplay;
+    let playerNameDisplay;
+    let nextButton;
+    let hintButton;
+    let controlsArea;
+    let startGameButton;
+    let playerNameInput;
+    let navPanel;
+    let navGrid;
+
+
+    // Function to set all DOM elements once the page is loaded
+    function setupDOMElements() {
+        welcomeScreen = document.getElementById('welcome-screen');
+        gameArea = document.getElementById('game-area');
+        resultArea = document.getElementById('result-area');
+        scoreDisplay = document.getElementById('current-score');
+        rankTitleDisplay = document.getElementById('current-rank-title');
+        qNumberDisplay = document.getElementById('q-number');
+        playerNameDisplay = document.getElementById('player-name');
+        nextButton = document.getElementById('next-button');
+        hintButton = document.getElementById('hint-button');
+        controlsArea = document.getElementById('controls-area');
+        startGameButton = document.getElementById('start-game-button');
+        playerNameInput = document.getElementById('player-name-input');
+        navPanel = document.getElementById('nav-panel');
+        navGrid = document.getElementById('nav-grid');
+
+        // Attach event listeners *after* elements are guaranteed to exist
+        if (startGameButton) startGameButton.addEventListener('click', startGame);
+        if (nextButton) nextButton.addEventListener('click', nextQuestion);
+        if (hintButton) hintButton.addEventListener('click', useHint);
+    }
+    
+    // --- Functions ---
+    function startGame() {
+        playerName = playerNameInput.value.trim() || "Trainee CPA";
+        playerNameDisplay.textContent = playerName;
+
+        welcomeScreen.style.display = 'none';
+        gameArea.style.display = 'block';
+        controlsArea.style.display = 'flex';
+        navPanel.style.display = 'block';
         
-        <div class="controls">
-            <button id="hint-btn" onclick="showHint()">Hint</button>
-            <button onclick="resetGame()">Reset</button> 
-            <button id="next-btn" onclick="nextQuestion()">Next Concept &gt;&gt;</button>
-        </div>
-    </div>
+        generateNavButtons();
+        loadQuestion(0);
+    }
 
-    <div id="end-screen" class="screen">
-        <h1>🎉 Quiz Complete!</h1>
-        <p id="end-message"></p>
-        <div style="font-size: 1.5em; margin: 20px 0;">Final Score: <span id="final-score"></span></div>
-        <div id="final-rating" style="font-size: 1.2em;"></div>
-
-        <div id="analytics-section">
-            <h3>Performance Breakdown (First-Try Correct):</h3>
-            <div id="asset-stats" class="category-stat"></div>
-            <div id="liability-stats" class="category-stat"></div>
-            <div id="equity-stats" class="category-stat"></div>
-        </div>
-
-        <div id="leaderboard">
-            <h3>Leaderboard (Last 5 Scores)</h3>
-            <ol id="leaderboard-list"></ol>
-        </div>
-
-        <button onclick="resetGame()">Play Again</button>
-    </div>
-
-    <script>
-        // --- Paste the full UPDATED JAVASCRIPT CODE here ---
-        // (Due to the character limit, the full script is provided in the previous code block for easy copying.)
-
-        // --- Game Data (Keeping the existing explanation data) ---
-        const ALL_CONCEPTS = [
-            { concept: "Assets", definition: "Company resources with economic value.", category: "Core", hint: "What the company OWNS.", explanation: "Assets are anything of economic value that a company owns and uses to generate revenue, like Cash, Equipment, or Receivables. They must equal Liabilities plus Equity." },
-            { concept: "Liabilities", definition: "Obligations owed to outsiders.", category: "Core", hint: "What the company OWES.", explanation: "Liabilities are debts or obligations a company must pay in the future, representing claims by creditors on the company's assets." },
-            { concept: "Shareholders’ Equity", definition: "Residual claim of owners after debts are subtracted.", category: "Core", hint: "The owners' stake in the company.", explanation: "Equity represents the owners' stake in the company's assets, calculated as Assets minus Liabilities. It includes stock and retained earnings." },
-            { concept: "Cash", definition: "Money immediately available for use.", category: "Asset", hint: "The most liquid asset.", explanation: "Cash is a current asset because it is the most liquid resource and is available immediately to settle obligations." },
-            { concept: "Accounts Receivable", definition: "Amounts customers owe to the company.", category: "Asset", hint: "Sales made on credit.", explanation: "This is a current asset representing money owed to the company from sales made on credit, typically collected within one year." },
-            { concept: "Inventory", definition: "Goods held for sale.", category: "Asset", hint: "Becomes Cost of Goods Sold when sold.", explanation: "Inventory is an asset until it is sold, at which point its cost is recognized as an expense (Cost of Goods Sold) on the Income Statement." },
-            { concept: "Equipment", definition: "Long-term resources like machinery.", category: "Asset", hint: "A long-term, depreciable resource.", explanation: "Equipment is a non-current (long-term) asset because it's used for several years, and its value is reduced over time through depreciation." },
-            { concept: "Prepaid Expenses", definition: "Payments made in advance for future benefits.", category: "Asset", hint: "A cost paid now, expensed later (e.g., insurance).", explanation: "Prepaid expenses are considered assets because they represent a future economic benefit (e.g., insurance coverage) that has been paid for but not yet used." },
-            { concept: "Accounts Payable", definition: "Money owed to suppliers.", category: "Liability", hint: "Short-term debt from buying supplies.", explanation: "This is a current liability for short-term obligations to suppliers for goods or services purchased on credit." },
-            { concept: "Notes Payable", definition: "Short-term written promises to pay creditors.", category: "Liability", hint: "A loan, often from a bank.", explanation: "Notes Payable are formal, written agreements to repay a specific amount, usually with interest, and are current if due within one year." },
-            { concept: "Unearned Revenue", definition: "Cash received for a service you still owe the customer.", category: "Liability", hint: "You owe a service/good in the future.", explanation: "This is a liability because the company has an obligation to provide a service or good in the future, even though the cash has already been received." },
-            { concept: "Wages Payable", definition: "Salaries owed to employees but not yet paid.", category: "Liability", hint: "An expense that has accrued.", explanation: "Wages Payable is a liability that accrues when employees earn wages before the company's payment date." },
-            { concept: "Common Stock", definition: "Capital raised by issuing shares.", category: "Equity", hint: "The initial investment by owners.", explanation: "Common Stock is the fundamental equity account, representing the par or stated value of the shares issued to owners." },
-            { concept: "Retained Earnings", definition: "Profits kept in the company instead of dividends.", category: "Equity", hint: "Cumulative net income less dividends.", explanation: "Retained Earnings accumulate over time; they represent the total profits the company has kept and reinvested rather than paying out as dividends." },
-            { concept: "Dividends Declared", definition: "Profits paid out to shareholders (reduces Equity).", category: "Equity", hint: "A negative entry in Equity.", explanation: "Dividends reduce retained earnings and are a distribution of profits, not an expense. Declaring them creates a temporary liability until paid." },
-            { concept: "Accumulated Depreciation", definition: "Total wear and tear deducted from an asset's cost.", category: "Asset", hint: "A Contra-Asset account.", explanation: "This account is a 'contra-asset' which sits on the Balance Sheet under Assets but is subtracted from the cost of the corresponding long-term asset (e.g., Equipment) to find its book value." },
-            { concept: "Goodwill", definition: "Value paid above net assets in an acquisition.", category: "Asset", hint: "An intangible asset.", explanation: "Goodwill is an intangible asset recorded when a company buys another firm for a price higher than the fair value of its identifiable net assets." },
-            { concept: "Income Tax Payable", definition: "Tax owed to the government.", category: "Liability", hint: "A statutory obligation.", explanation: "Income Tax Payable is a current liability for taxes owed to government entities that have been incurred but not yet paid." },
-            { concept: "Additional Paid-in Capital", definition: "Money paid by investors above the par value of stock.", category: "Equity", hint: "Part of the contributed capital.", explanation: "This account captures the excess amount investors pay above the small legal 'par value' of the stock when it is initially issued by the company." },
-            { concept: "Net Working Capital", definition: "Current Assets minus Current Liabilities.", category: "Core", hint: "A measure of short-term liquidity.", explanation: "Net Working Capital is a core metric that assesses a company's ability to cover its short-term liabilities with its short-term assets." }
-        ];
-
-        // --- Game State Variables ---
-        let playerName = '';
-        let conceptsToQuiz = [];
-        let currentConceptIndex = 0;
-        let currentScore = 0;
-        let attempts = {}; 
-        let leaderboard = JSON.parse(localStorage.getItem('financialLeaderboard')) || [];
-
-        // --- DOM Elements ---
-        const gameScreenEl = document.getElementById('game-screen');
-        const conceptEl = document.getElementById('current-concept');
-        const optionsContainer = document.getElementById('options-container');
-        const feedbackEl = document.getElementById('feedback-message');
-        const scoreEl = document.getElementById('current-score');
-        const qNumEl = document.getElementById('question-number');
-        const totalQEl = document.getElementById('total-questions');
-        const hintBtn = document.getElementById('hint-btn');
-        const progressBarEl = document.getElementById('progress-bar');
-
-        // --- Helper Functions (Same as above) ---
-
-        function shuffle(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-            return array;
-        }
-
-        function getIncorrectDefinitions(correctDef, count = 3) {
-            const allDefs = ALL_CONCEPTS.map(c => c.definition).filter(def => def !== correctDef);
-            return shuffle(allDefs).slice(0, count);
-        }
-
-        function createOptions(correctConcept) {
-            optionsContainer.innerHTML = '';
-            const correctDef = correctConcept.definition;
-            const incorrectDefs = getIncorrectDefinitions(correctDef, 3);
-            
-            let options = [
-                { def: correctDef, isCorrect: true },
-                ...incorrectDefs.map(def => ({ def: def, isCorrect: false }))
-            ];
-
-            shuffle(options);
-
-            options.forEach(option => {
-                const btn = document.createElement('button');
-                btn.className = 'option-btn';
-                btn.textContent = option.def;
-                btn.onclick = () => checkAnswer(btn, option.isCorrect, correctConcept);
-                optionsContainer.appendChild(btn);
-            });
-        }
-
-        function updateProgressBar() {
-            const percentage = (currentConceptIndex / ALL_CONCEPTS.length) * 100;
-            progressBarEl.style.width = `${percentage}%`;
-        }
-
-        // --- Game Logic ---
-
-        function startGame() {
-            playerName = document.getElementById('playerName').value || 'CFO Trainee';
-            document.getElementById('start-screen').style.display = 'none';
-            document.getElementById('game-screen').style.display = 'block';
-
-            currentScore = 0;
-            currentConceptIndex = 0;
-            attempts = {};
-            
-            conceptsToQuiz = shuffle([...ALL_CONCEPTS]);
-            totalQEl.textContent = conceptsToQuiz.length;
-
-            loadQuestion();
-        }
-
-        function loadQuestion() {
-            if (currentConceptIndex >= conceptsToQuiz.length) {
-                endGame();
-                return;
-            }
-
-            const currentConcept = conceptsToQuiz[currentConceptIndex];
-            
-            qNumEl.textContent = currentConceptIndex + 1;
-            scoreEl.textContent = currentScore;
-            conceptEl.textContent = currentConcept.concept;
-            conceptEl.style.animation = 'none'; 
-            void conceptEl.offsetWidth; 
-            conceptEl.style.animation = 'fadeIn 1s'; 
-            
-            feedbackEl.textContent = '';
-            feedbackEl.style.border = 'none'; 
-            feedbackEl.style.padding = '0';
-            feedbackEl.style.background = 'transparent';
-            
-            hintBtn.disabled = false;
-            
-            document.querySelectorAll('.option-btn').forEach(btn => {
-                btn.className = 'option-btn'; 
-                btn.disabled = false;
-            });
-
-            if (!attempts[currentConcept.concept]) {
-                attempts[currentConcept.concept] = { 
-                    correct: false, 
-                    category: currentConcept.category, 
-                    answered: false, 
-                    firstTry: true,
-                    hintsUsed: 0 // New tracker for hint usage
-                };
-            } else if (attempts[currentConcept.concept].correct) {
-                 // If already answered correctly, disable buttons to prevent re-answering
-                 Array.from(optionsContainer.children).forEach(btn => btn.disabled = true);
-            }
-
-            createOptions(currentConcept);
-            updateProgressBar();
-        }
-
-        // UPDATED: CheckAnswer now calculates score with hint penalty.
-        function checkAnswer(selectedButton, isCorrect, concept) {
-            const currentAttempt = attempts[concept.concept];
-            
-            if (currentAttempt.answered && currentAttempt.correct) return; 
-
-            selectedButton.classList.remove('option-btn');
-            selectedButton.disabled = true;
-            
-            feedbackEl.style.padding = '15px';
-            feedbackEl.style.background = '#fcfcfc';
-            feedbackEl.style.border = '1px solid #ccc';
-
-
-            if (isCorrect) {
-                selectedButton.classList.add('correct');
-                
-                let scoreChange = 0;
-                if (currentAttempt.firstTry) {
-                    scoreChange += 10;
+    function generateNavButtons() {
+        navGrid.innerHTML = '';
+        QUESTIONS.forEach((q, index) => {
+            const button = document.createElement('button');
+            button.className = 'nav-button';
+            button.textContent = index + 1;
+            button.dataset.index = index;
+            button.addEventListener('click', () => {
+                if (questionStatuses[currentQuestionIndex] !== 0) {
+                    loadQuestion(index);
+                } else {
+                    alert("Please answer or skip the current question before navigating.");
                 }
-                
-                // Deduct points for hints used on THIS question
-                scoreChange -= (currentAttempt.hintsUsed * 2);
-                
-                currentScore += scoreChange;
-                scoreEl.textContent = currentScore;
-                
-                let feedbackText = `✅ <strong>CORRECT! ${concept.concept}</strong>: ${concept.definition}`;
-                feedbackText += `<br>Points earned: ${scoreChange} (10 base - ${currentAttempt.hintsUsed * 2} for hints).`;
-                feedbackText += `<br><br><strong>Explanation:</strong> ${concept.explanation}`;
-                feedbackEl.innerHTML = feedbackText;
-                
-                currentAttempt.correct = true; 
-                currentAttempt.answered = true;
-                
-                Array.from(optionsContainer.children).forEach(btn => btn.disabled = true);
-                hintBtn.disabled = true; // Disable hint after correct answer
+            });
+            navGrid.appendChild(button);
+        });
+        updateNavButtons();
+    }
+    
+    function updateNavButtons() {
+        const buttons = navGrid.querySelectorAll('.nav-button');
+        buttons.forEach((button, index) => {
+            button.classList.remove('current', 'answered', 'skipped');
 
-            } else {
-                selectedButton.classList.add('incorrect');
-                
-                gameScreenEl.style.animation = 'shake 0.5s';
-                setTimeout(() => { gameScreenEl.style.animation = 'none'; }, 500);
+            if (index === currentQuestionIndex) {
+                button.classList.add('current');
+            } else if (questionStatuses[index] === 2 || questionStatuses[index] === 3) {
+                button.classList.add('answered'); 
+            } else if (questionStatuses[index] === 1) {
+                button.classList.add('skipped');
+            }
+        });
+    }
 
-                const correctButton = Array.from(optionsContainer.children).find(btn => btn.textContent === concept.definition);
-                correctButton.classList.add('correct');
-                
-                let feedbackText = `❌ <strong>INCORRECT.</strong> The correct answer for <strong>${concept.concept}</strong> is: ${concept.definition}`;
-                feedbackText += `<br><br><strong>Explanation:</strong> ${concept.explanation}`;
-                feedbackEl.innerHTML = feedbackText;
-                
-                currentAttempt.firstTry = false;
-                
-                Array.from(optionsContainer.children).forEach(btn => {
-                    if (!btn.classList.contains('incorrect') && !btn.classList.contains('correct')) {
-                        btn.disabled = false;
-                    } else if (btn.classList.contains('correct')) {
-                        btn.disabled = true; 
+    function getRankTitle(score) {
+        for (let i = RANKS.length - 1; i >= 0; i--) {
+            if (score >= RANKS[i].minScore) {
+                return RANKS[i].title;
+            }
+        }
+        return RANKS[0].title;
+    }
+    
+    function updateScoreDisplay() {
+        scoreDisplay.textContent = currentScore;
+        rankTitleDisplay.textContent = getRankTitle(currentScore);
+        
+        const displayIndex = currentQuestionIndex < QUESTIONS.length ? currentQuestionIndex + 1 : QUESTIONS.length;
+        qNumberDisplay.textContent = displayIndex;
+    }
+
+    function loadQuestion(index) {
+        currentQuestionIndex = index;
+
+        if (currentQuestionIndex >= QUESTIONS.length) {
+            showResults();
+            return;
+        }
+        
+        const qData = QUESTIONS[currentQuestionIndex];
+        hintUsed = false;
+        
+        const isAnsweredOrSkipped = questionStatuses[currentQuestionIndex] !== 0;
+
+        hintButton.disabled = isAnsweredOrSkipped;
+        nextButton.disabled = isAnsweredOrSkipped && (currentQuestionIndex === QUESTIONS.length - 1); 
+        nextButton.textContent = isAnsweredOrSkipped ? 'NEXT >' : 'SKIP >'; 
+
+        let content = `
+            <div class="question-box">
+                <h2>Question ${currentQuestionIndex + 1}: ${qData.concept}</h2>
+                <p class="question-text">${qData.question}</p>
+        `;
+        
+        if (qData.type === 'mcq') {
+            content += `<ul class="options-list">`;
+            qData.options.forEach((option, idx) => {
+                content += `
+                    <li><button class="option-button" data-answer="${option}" data-index="${idx}">${option}</button></li>
+                `;
+            });
+            content += `</ul>`;
+
+            setTimeout(() => {
+                document.querySelectorAll('.option-button').forEach(button => {
+                    button.addEventListener('click', handleAnswer);
+                    if (isAnsweredOrSkipped) {
+                        button.classList.add('disabled');
+                        if (button.dataset.answer === qData.answer) {
+                            button.classList.add('correct');
+                        }
                     }
                 });
-            }
-        }
-
-        // UPDATED: showHint now deducts 2 points and tracks usage.
-        function showHint() {
-            const currentConcept = conceptsToQuiz[currentConceptIndex];
-            const conceptName = currentConcept.concept;
-            const currentAttempt = attempts[conceptName];
-            const deduction = 2;
-
-            if (currentAttempt.correct) {
-                feedbackEl.innerHTML = '💡 Hint already used and question is complete.';
-                hintBtn.disabled = true;
-                return;
-            }
-            
-            // Deduct points only if the hint hasn't been used before for this specific question
-            if (currentAttempt.hintsUsed === 0) {
-                 currentScore -= deduction;
-                 scoreEl.textContent = currentScore;
-            }
-            
-            currentAttempt.hintsUsed++;
-
-            feedbackEl.style.padding = '15px';
-            feedbackEl.style.background = '#fffde7'; 
-            feedbackEl.style.border = '1px solid #ffeb3b';
-
-            feedbackEl.innerHTML = `💡 <strong>Hint Used! (-${deduction} points)</strong>: ${currentConcept.hint}`;
-            hintBtn.disabled = true;
-        }
-
-        function nextQuestion() {
-            if (currentConceptIndex < conceptsToQuiz.length) {
-                const concept = conceptsToQuiz[currentConceptIndex].concept;
-                // Ensure the concept is marked as "answered" if they skip it or didn't get it right
-                if (!attempts[concept] || !attempts[concept].answered) {
-                    attempts[concept] = { correct: false, category: conceptsToQuiz[currentConceptIndex].category, answered: true, firstTry: false, hintsUsed: 0 };
+            }, 0);
+        } else if (qData.type === 'task') {
+             const inputDisabled = isAnsweredOrSkipped ? 'disabled' : '';
+             const submitDisabled = isAnsweredOrSkipped ? 'disabled' : '';
+             
+             let feedbackText = '';
+             let feedbackColor = '';
+             if (isAnsweredOrSkipped) {
+                if (questionStatuses[currentQuestionIndex] === 2) {
+                    feedbackText = `CORRECT! The answer was ${qData.answer}.`;
+                    feedbackColor = 'var(--correct-color)';
+                } else if (questionStatuses[currentQuestionIndex] === 3) {
+                    feedbackText = `INCORRECT. The correct answer was ${qData.answer}.`;
+                    feedbackColor = 'var(--wrong-color)';
+                } else if (questionStatuses[currentQuestionIndex] === 1) {
+                    feedbackText = `SKIPPED. The correct answer was ${qData.answer}.`;
+                    feedbackColor = 'var(--wrong-color)';
                 }
+             }
+            
+            content += `
+                <div class="task-area">
+                    <input type="text" id="task-input" placeholder="Enter your numerical answer (e.g., 10000) or text answer..." ${inputDisabled}/>
+                    <button id="task-submit" class="option-button" ${submitDisabled}>Submit Calculation</button>
+                </div>
+                <p id="task-feedback" style="margin-top: 15px; font-weight: bold; color: ${feedbackColor};">${feedbackText}</p>
+            `;
+             setTimeout(() => {
+                const submitButton = document.getElementById('task-submit');
+                if (submitButton) submitButton.addEventListener('click', handleTaskSubmit);
+            }, 0);
+        }
+
+        content += `<div id="hint-message-area"></div></div>`;
+        gameArea.innerHTML = content;
+        updateScoreDisplay();
+        updateNavButtons();
+    }
+
+    function handleAnswer(event) {
+        if (questionStatuses[currentQuestionIndex] > 0) return;
+
+        const selectedButton = event.target;
+        const qData = QUESTIONS[currentQuestionIndex];
+        const isCorrect = selectedButton.dataset.answer === qData.answer;
+
+        document.querySelectorAll('.option-button').forEach(button => {
+            button.classList.add('disabled');
+            if (button.dataset.answer === qData.answer) {
+                button.classList.add('correct');
+            } else if (button === selectedButton) {
+                button.classList.add('incorrect');
             }
-            
-            currentConceptIndex++;
-            loadQuestion();
+        });
+
+        if (isCorrect) {
+            currentScore += 10;
+            questionStatuses[currentQuestionIndex] = 2; 
+        } else {
+            currentScore -= 5;
+            questionStatuses[currentQuestionIndex] = 3; 
         }
 
-        function calculateAnalytics() {
-            const categories = { 
-                Asset: { total: 0, correct: 0 }, 
-                Liability: { total: 0, correct: 0 }, 
-                Equity: { total: 0, correct: 0 }, 
-                Core: { total: 0, correct: 0 } 
-            };
+        finalizeQuestion();
+    }
+    
+    function handleTaskSubmit() {
+        if (questionStatuses[currentQuestionIndex] > 0) return;
+        
+        const qData = QUESTIONS[currentQuestionIndex];
+        const inputElement = document.getElementById('task-input');
+        const feedbackElement = document.getElementById('task-feedback');
+        const submitButton = document.getElementById('task-submit');
+        
+        // Robust cleaning for numerical/text answers
+        const userAnswer = inputElement.value.toLowerCase().replace(/[^a-z0-9-]/g, '').trim();
+        const correctAnswer = qData.answer.toLowerCase().replace(/[^a-z0-9-]/g, '').trim();
+        
+        const isCorrect = userAnswer === correctAnswer;
 
-            Object.values(attempts).forEach(att => {
-                const cat = att.category;
-                if (categories[cat]) {
-                    categories[cat].total++;
-                    if (att.correct) categories[cat].correct++; 
-                }
-            });
-
-            document.getElementById('asset-stats').innerHTML = `<strong>Assets</strong> (What you own): ${categories.Asset.correct}/${categories.Asset.total} first-try correct.`;
-            document.getElementById('liability-stats').innerHTML = `<strong>Liabilities</strong> (What you owe): ${categories.Liability.correct}/${categories.Liability.total} first-try correct.`;
-            document.getElementById('equity-stats').innerHTML = `<strong>Equity</strong> (Owners' claim): ${categories.Equity.correct}/${categories.Equity.total} first-try correct.`;
-        }
-
-        function updateLeaderboard() {
-            const maxScore = ALL_CONCEPTS.length * 10;
-            
-            leaderboard.push({ name: playerName, score: currentScore, maxScore: maxScore, date: new Date().toLocaleDateString() });
-            
-            leaderboard.sort((a, b) => b.score - a.score);
-            leaderboard = leaderboard.slice(0, 5);
-
-            localStorage.setItem('financialLeaderboard', JSON.stringify(leaderboard));
-
-            const listEl = document.getElementById('leaderboard-list');
-            listEl.innerHTML = '';
-            
-            leaderboard.forEach((entry, index) => {
-                const li = document.createElement('li');
-                li.innerHTML = `<strong>#${index + 1}</strong> - ${entry.name} (${entry.score}/${entry.maxScore}) on ${entry.date}`;
-                listEl.appendChild(li);
-            });
-        }
-
-        function endGame() {
-            document.getElementById('game-screen').style.display = 'none';
-            document.getElementById('end-screen').style.display = 'block';
-
-            const score = currentScore;
-            const maxScore = ALL_CONCEPTS.length * 10;
-            const percentage = Math.round((score / maxScore) * 100);
-
-            let rating = '';
-            if (percentage === 100) rating = 'Balance Sheet Architect 🏆';
-            else if (percentage >= 85) rating = 'Financial Fixer 💼';
-            else if (percentage >= 70) rating = 'Ledger Learner 📚';
-            else rating = 'Try Again! 🔄';
-
-            document.getElementById('end-message').textContent = `Congratulations, ${playerName}! You finished all ${ALL_CONCEPTS.length} concepts.`;
-            document.getElementById('final-score').textContent = `${score}/${maxScore} (${percentage}%)`;
-            document.getElementById('final-rating').textContent = `Rating: ${rating}.`;
-            
-            calculateAnalytics();
-            updateLeaderboard();
-        }
-
-        function resetGame() {
-            document.getElementById('start-screen').style.display = 'block';
-            document.getElementById('game-screen').style.display = 'none';
-            document.getElementById('end-screen').style.display = 'none';
-            document.getElementById('playerName').value = '';
+        // Visual Feedback
+        submitButton.classList.add('disabled');
+        inputElement.disabled = true;
+        
+        if (isCorrect) {
+            feedbackElement.textContent = `CORRECT! The answer is ${qData.answer}. (+10 Pts)`;
+            feedbackElement.style.color = 'var(--correct-color)';
+            currentScore += 10;
+            questionStatuses[currentQuestionIndex] = 2; 
+        } else {
+            feedbackElement.textContent = `INCORRECT. The correct answer was ${qData.answer}. (-5 Pts)`;
+            feedbackElement.style.color = 'var(--wrong-color)';
+            currentScore -= 5;
+            questionStatuses[currentQuestionIndex] = 3; 
         }
         
-        // Initial setup
-        document.addEventListener('DOMContentLoaded', () => {
-            totalQEl.textContent = ALL_CONCEPTS.length;
-            updateLeaderboard(); 
-        });
-    </script>
+        finalizeQuestion();
+    }
+
+    function useHint() {
+        if (hintUsed || questionStatuses[currentQuestionIndex] > 0) return;
+        
+        currentScore -= 2;
+        hintUsed = true;
+        hintButton.disabled = true;
+
+        const qData = QUESTIONS[currentQuestionIndex];
+        const hintMessageArea = document.getElementById('hint-message-area');
+        
+        hintMessageArea.innerHTML = `<div class="hint-message">Hint: ${qData.hint}</div>`;
+        updateScoreDisplay();
+    }
+
+    function finalizeQuestion() {
+        hintButton.disabled = true;
+        nextButton.disabled = false;
+        nextButton.textContent = 'NEXT >';
+        updateScoreDisplay();
+        updateNavButtons();
+    }
+    
+    function nextQuestion() {
+        const isLastQuestion = currentQuestionIndex === QUESTIONS.length - 1;
+        
+        // If question is UNATTEMPTED (status 0), process skip penalty
+        if (questionStatuses[currentQuestionIndex] === 0) {
+            currentScore -= 5; 
+            questionStatuses[currentQuestionIndex] = 1; // Mark as Skipped/Incomplete
+            updateScoreDisplay();
+            updateNavButtons();
+        }
+
+        // Navigate to the next question or show results if at the end
+        if (!isLastQuestion) {
+            loadQuestion(currentQuestionIndex + 1);
+        } else {
+            showResults();
+        }
+    }
+
+    function showResults() {
+        // Check if all questions are attempted (answered or skipped)
+        if (questionStatuses.some(status => status === 0)) {
+            // Find the first unattempted question index
+            const firstUnattempted = questionStatuses.findIndex(status => status === 0);
+            alert(`You must attempt or skip all questions before completing the engagement. Go to Question ${firstUnattempted + 1}.`);
+            loadQuestion(firstUnattempted);
+            return;
+        }
+
+        gameArea.style.display = 'none';
+        controlsArea.style.display = 'none';
+        navPanel.style.display = 'none';
+        resultArea.style.display = 'block';
+
+        const finalRank = getRankTitle(currentScore);
+
+        let tableContent = RANKS.map(rank => {
+            const isCurrent = rank.title === finalRank;
+            const rowClass = isCurrent ? 'current-rank' : '';
+            return `<tr class="${rowClass}">
+                        <td>${rank.title}</td>
+                        <td>${rank.minScore} Pts</td>
+                    </tr>`;
+        }).join('');
+
+        resultArea.innerHTML = `
+            <h2>ENGAGEMENT COMPLETE, ${playerName.toUpperCase()}! 🎉</h2>
+            <p style="font-size: 1.5em;">Your Final Score: <strong>${currentScore} Points</strong></p>
+            <p style="font-size: 1.8em; color: var(--primary-color);">Your CPA Climb Rank: <strong>${finalRank}</strong></p>
+            
+            <h3 style="margin-top: 40px;">CPA Ladder Ranking</h3>
+            <table class="rank-table">
+                <tr><th>Rank Title</th><th>Minimum Score</th></tr>
+                ${tableContent}
+            </table>
+            <button class="option-button" style="width: auto; margin-top: 20px;" onclick="window.location.reload()">Start New Engagement</button>
+        `;
+    }
+
+    // This listener ensures that all the HTML elements are loaded before the JavaScript attempts
+    // to find them and attach event listeners. The script is now at the end of the <body> for safety.
+    document.addEventListener('DOMContentLoaded', setupDOMElements);
+
+</script>
 </body>
 </html>
