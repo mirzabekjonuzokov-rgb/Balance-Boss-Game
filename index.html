@@ -3,924 +3,950 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The CPA Climb: Staff Auditor - Public Accounting Game</title>
+    <title>Income Statement Audit Challenge</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* New & Improved Color Scheme */
-        :root {
-            --primary-color: #002D62; /* Deep Navy Blue (Corporate) */
-            --secondary-color: #FFC72C; /* Gold/Yellow (Accent/Success) */
-            --text-color: #333;
-            --light-bg: #F5F7FA; /* Light Blue-Gray Background */
-            --white: #ffffff;
-            --correct-color: #00A65A; /* Green for Success */
-            --wrong-color: #D62828; /* Red for Error */
-            --shadow: 0 8px 15px rgba(0, 0, 0, 0.1); /* Deeper shadow */
-            --nav-bg: #EAEFF4; /* Lighter background for nav */
-        }
-
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap');
+        
+        /* Tailwind-inspired base styling and custom design */
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--light-bg);
-            color: var(--text-color);
+            font-family: 'Inter', sans-serif;
+            background-color: #fffbeb; /* Very Light Yellow/Cream background */
             margin: 0;
             padding: 20px;
+            color: #1f2937; /* Dark text */
+        }
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #f59e0b; /* Amber color for emphasis */
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 2.5em;
+            font-weight: 900;
+        }
+        h2 {
+            font-size: 1.5em;
+            font-weight: 800;
+            color: #b45309;
+        }
+
+        /* --- Global Button Styling --- */
+        .primary-btn {
+            background-color: #f59e0b;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.1s, box-shadow 0.3s;
+            box-shadow: 0 4px 10px rgba(245, 158, 11, 0.3);
+            font-weight: 700;
+        }
+        .primary-btn:hover {
+            background-color: #d97706;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(245, 158, 11, 0.4);
+        }
+        .check-btn {
+            background-color: #10b981; /* Green Check Button */
+            color: white;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);
+            margin-top: 20px;
+        }
+        .check-btn:hover {
+            background-color: #059669;
+        }
+
+        /* Hint Button Style */
+        .hint-btn {
+            background: none;
+            border: 1px solid #f59e0b;
+            color: #f59e0b;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            font-size: 0.8em;
+            margin-right: 15px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-weight: 800;
             display: flex;
             justify-content: center;
-            align-items: flex-start;
-            min-height: 100vh;
+            align-items: center;
+        }
+        .hint-btn:hover {
+            background-color: #fef3c7;
         }
 
-        .game-wrapper {
-            display: flex;
-            width: 100%;
-            max-width: 1300px; /* Wider layout */
-        }
 
-        .game-container {
-            flex-grow: 1;
-            background: var(--white);
-            border-radius: 12px;
-            box-shadow: var(--shadow);
-            padding: 40px;
-            margin-right: 30px; 
-            border-top: 5px solid var(--primary-color);
-        }
-        
-        /* --- Navigation Panel --- */
-        .nav-panel {
-            width: 280px; /* Slightly wider nav */
-            background: var(--nav-bg);
-            border-radius: 12px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            padding: 25px 20px;
-            align-self: flex-start;
-            position: sticky;
-            top: 20px;
-            border-left: 4px solid var(--secondary-color);
-        }
-
-        .nav-panel h3 {
-            margin-top: 0;
-            color: var(--primary-color);
-            border-bottom: 2px solid var(--secondary-color);
-            padding-bottom: 10px;
-            margin-bottom: 15px;
-            font-size: 1.4em;
-        }
-
-        .nav-grid {
-            display: grid;
-            grid-template-columns: repeat(6, 1fr); /* More columns for compact look */
-            gap: 10px;
-        }
-
-        .nav-button {
-            padding: 10px 0;
-            border: none;
-            border-radius: 6px;
-            background-color: var(--white);
-            color: var(--primary-color);
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 0.9em;
+        /* --- Start Screen --- */
+        #start-screen {
             text-align: center;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-            transition: all 0.2s;
+            padding: 40px;
+        }
+        #name-input {
+            padding: 10px;
+            border: 2px solid #f59e0b;
+            border-radius: 6px;
+            width: 80%;
+            max-width: 300px;
+            margin: 15px 0 30px 0;
+            font-size: 1em;
+            text-align: center;
+        }
+        .rules-box {
+            background-color: #fef3c7;
+            border: 1px solid #f59e0b;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 30px;
+            text-align: left;
         }
 
-        .nav-button:hover:not(.current):not(.answered) {
-            background-color: #CFD8DC;
+        /* --- Game Layout --- */
+        #game-screen {
+            display: none;
+        }
+        .statement-container {
+            border: 2px solid #fef3c7;
+            padding: 20px;
+            border-radius: 12px;
+            background-color: #fff;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
         }
         
-        .nav-button.current {
-            background-color: var(--secondary-color);
-            color: var(--primary-color);
-            font-weight: bold;
-            transform: scale(1.05);
-            border: 2px solid var(--primary-color);
+        /* Statement Sections */
+        .statement-section {
+            margin-bottom: 25px;
+            padding: 15px;
+            border-bottom: 1px solid #fde68a;
+        }
+        .section-title {
+            font-size: 1.4em;
+            font-weight: 800;
+            color: #b45309;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
         }
 
-        .nav-button.answered {
-            background-color: var(--correct-color);
-            color: var(--white);
-            border: 1px solid var(--correct-color);
-        }
-
-        .nav-button.skipped {
-            background-color: var(--wrong-color);
-            color: var(--white);
-            border: 1px solid var(--wrong-color);
-        }
-
-        /* --- Header & Scoreboard --- */
-        .header {
+        /* Line Items */
+        .line-item {
+            padding: 8px 15px;
+            margin-bottom: 4px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding-bottom: 20px;
-            margin-bottom: 30px;
+            border-radius: 4px;
+            transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
+            font-weight: 500;
+        }
+        .item-details {
+            display: flex;
+            align-items: center;
+            gap: 10px; /* Space between hint button and value */
         }
 
-        .header h1 {
-            color: var(--primary-color);
-            margin: 0;
-            font-size: 2.2em;
-            border-left: 5px solid var(--secondary-color);
-            padding-left: 15px;
+        /* Styles for clickable/error items */
+        .line-item[data-status*="error"] {
+             cursor: pointer;
         }
 
-        .score-board {
-            text-align: right;
-            font-weight: 600;
+        /* Classification Error (Yellow) */
+        .line-item[data-status="classification-error"] {
+            background-color: #fef9c3; 
+            border: 1px solid #f59e0b;
+            box-shadow: 0 0 5px rgba(245, 158, 11, 0.5);
+        }
+        .line-item[data-status="classification-error"]:hover {
+            background-color: #fcd34d;
+            transform: translateY(-1px);
+        }
+
+        /* Numerical Error (Red Dashed) */
+        .line-item[data-status="numerical-error"] {
+            background-color: #fee2e2; /* Light red/pink background */
+            border: 2px dashed #dc2626; /* Red dashed border */
+            box-shadow: 0 0 5px rgba(220, 38, 38, 0.5);
+            animation: pulse 1.5s infinite;
+        }
+        .line-item[data-status="numerical-error"]:hover {
+            background-color: #fca5a5;
+            transform: translateY(-1px);
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.005); }
+            100% { transform: scale(1); }
+        }
+
+        /* Fixed Items (Green) */
+        .line-item[data-status*="fixed"] {
+            background-color: #d1fae5; /* Green for fixed item */
+            color: #065f46;
+            cursor: default;
+            border: 1px solid #10b981;
+        }
+
+        /* Total Lines */
+        .total-line {
+            font-weight: 800;
+            font-size: 1.1em;
+            padding: 10px 15px;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            border-top: 2px double #f59e0b;
+            display: flex;
+            justify-content: space-between;
+            background-color: #fef3c7;
+            border-radius: 4px;
+        }
+        .net-income {
+            font-weight: 800;
+            font-size: 1.5em;
+            background-color: #fff;
+            border: 3px solid #f59e0b; /* Start with amber border */
+            color: #b45309;
+            margin-top: 20px;
+            padding: 15px;
+            text-align: center;
+            border-radius: 8px;
+        }
+
+        /* Modal/Dialog Styling */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+        .modal-overlay.visible {
+            visibility: visible;
+            opacity: 1;
+        }
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 450px;
+            animation: fadeIn 0.3s;
+        }
+        .modal-content h3 {
+            color: #b45309;
+            margin-top: 0;
+            border-bottom: 2px solid #fef3c7;
+            padding-bottom: 10px;
+        }
+        .category-option {
+            display: block;
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #f59e0b;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.1s;
+        }
+        .category-option:hover {
+            background-color: #fef3c7;
+        }
+        .modal-close-btn {
+            float: right;
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            cursor: pointer;
+            color: #9ca3af;
+        }
+        
+        /* Hint Modal Specific Styles */
+        #hint-content {
+            padding: 10px 0;
+            font-size: 1.05em;
             line-height: 1.4;
         }
 
-        .score-board span {
-            display: block;
-            font-size: 1.1em;
-            color: var(--text-color);
-        }
 
-        #current-score {
-            font-size: 1.8em;
-            color: var(--correct-color);
-            font-weight: 800;
-        }
-
-        /* --- Welcome Screen Styles --- */
-        #welcome-screen {
-            padding: 40px 20px;
-            text-align: center;
-            background-color: var(--nav-bg);
-            border-radius: 10px;
-        }
-        #welcome-screen h2 {
-            color: var(--primary-color);
-            font-size: 2.4em;
-            margin-bottom: 25px;
-        }
-        .rules-box {
-            background-color: var(--white);
-            border: 1px solid var(--secondary-color);
-            padding: 20px;
-            margin: 25px 0;
-            text-align: left;
+        /* Feedback and Score */
+        #feedback {
+            padding: 15px;
+            margin-top: 20px;
             border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-        }
-        .rules-box h3 {
-            color: var(--secondary-color);
-            margin-top: 0;
-        }
-        #player-name-input {
-            padding: 12px;
-            width: 70%;
-            border: 2px solid var(--primary-color);
-            border-radius: 6px;
-            font-size: 1.1em;
-            margin-top: 15px;
-        }
-        
-        /* --- Question Area --- */
-        .question-box h2 {
-            margin-top: 0;
-            color: var(--primary-color);
-            font-size: 1.8em;
-            padding-bottom: 5px;
-            border-bottom: 1px dashed #ccc;
-        }
-
-        .question-text {
-            background-color: #EAEFF4;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 25px;
-            line-height: 1.7;
-            font-size: 1.1em;
-            border-left: 5px solid var(--secondary-color);
-        }
-
-        .options-list {
-            list-style: none;
-            padding: 0;
-        }
-
-        .options-list li {
-            margin-bottom: 12px;
-        }
-
-        .option-button {
-            display: block;
-            width: 100%;
-            padding: 18px 25px;
-            text-align: left;
-            border: 2px solid var(--primary-color);
-            border-radius: 8px;
-            background-color: var(--white);
-            color: var(--primary-color);
-            cursor: pointer;
-            font-size: 1.1em;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-        }
-
-        .option-button:hover:not(.disabled) {
-            background-color: var(--primary-color);
-            color: var(--white);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .option-button.correct {
-            background-color: var(--correct-color);
-            color: var(--white);
-            border-color: var(--correct-color);
-        }
-
-        .option-button.incorrect {
-            background-color: var(--wrong-color);
-            color: var(--white);
-            border-color: var(--wrong-color);
-        }
-
-        .disabled {
-            pointer-events: none;
-            opacity: 0.8;
-            box-shadow: none;
-        }
-
-        /* --- Task Area --- */
-        .task-area input[type="text"] {
-            width: 50%;
-            padding: 12px;
-            border: 2px solid var(--primary-color);
-            border-radius: 6px;
-            font-size: 1.1em;
-            margin-right: 15px;
-        }
-        
-        #task-submit {
-            width: auto !important;
-        }
-
-        /* --- Controls --- */
-        .controls {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-top: 25px;
-            border-top: 2px dashed #ccc;
-            margin-top: 30px;
-        }
-        
-        #next-button, #start-game-button {
-            padding: 15px 35px;
-            background-color: var(--primary-color);
-            color: var(--white);
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1.3em;
-            font-weight: 700;
-            box-shadow: 0 5px 0px #001A36;
-            transition: all 0.1s;
-        }
-
-        #next-button:hover, #start-game-button:hover {
-            background-color: #001A36;
-            transform: translateY(1px);
-            box-shadow: 0 4px 0px #001A36;
-        }
-
-
-        #hint-button {
-            padding: 12px 20px;
-            background-color: var(--secondary-color);
-            color: var(--primary-color);
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
             font-weight: 600;
-            font-size: 1em;
-            transition: background-color 0.2s;
-            box-shadow: 0 3px 0px #CC9C00;
+            text-align: center;
+            background-color: #fef3c7;
         }
 
-        #hint-button:hover {
-            background-color: #CC9C00;
-            transform: translateY(1px);
-            box-shadow: 0 2px 0px #CC9C00;
+        /* --- Results Screen --- */
+        #results-screen {
+            display: none;
+            text-align: center;
+            padding: 50px;
+        }
+        .score-card {
+            background-color: #ecfdf5; /* Light green */
+            border: 4px solid #10b981;
+            border-radius: 12px;
+            padding: 30px;
+            margin-top: 30px;
+            display: inline-block;
+            box-shadow: 0 10px 20px rgba(16, 185, 129, 0.2);
+        }
+        .score-item {
+            font-weight: 600;
+        }
+        #results-net-income {
+            font-size: 1.8em;
+            margin-top: 20px;
+            font-weight: 800;
+            color: #065f46;
         }
         
-        .hint-message {
-            margin-top: 15px;
-            padding: 12px;
-            background-color: #FFF8E1;
-            border-left: 5px solid var(--secondary-color);
-            color: var(--text-color);
-            border-radius: 4px;
+        /* Mobile Responsiveness */
+        @media (max-width: 600px) {
+            .container {
+                padding: 15px;
+            }
+            .total-line, .line-item {
+                font-size: 1em;
+            }
         }
     </style>
 </head>
 <body>
-
-<div class="game-wrapper">
-    
-    <div class="game-container">
+    <div class="container">
         
-        <div class="header">
-            <h1>The CPA Climb: Staff Auditor</h1>
-            <div class="score-board">
-                <span>Trainee: <strong id="player-name">Guest</strong></span>
-                <span>Q: <span id="q-number">0</span> / 25</span>
-                <span class="rank-title">Rank: <strong id="current-rank-title">Staff I</strong></span>
-                <span>Score: <strong id="current-score">100</strong> Pts</span>
-            </div>
-        </div>
-
-        <div id="welcome-screen">
-            <h2>Welcome to the Audit Engagement! 🚀</h2>
-
-            <p style="font-size: 1.1em;">Enter your name to begin your journey up the CPA Ladder.</p>
-            <input type="text" id="player-name-input" placeholder="Your Name" value="Trainee CPA" maxlength="30">
+        <!-- Start Screen (Input Name and Rules) -->
+        <div id="start-screen">
+            <h1>Audit Challenge: Find the Mistake 🕵️</h1>
+            <h2>Income Statement Edition</h2>
+            
+            <p style="font-size:1.1em; margin-bottom:10px;">Enter your name to start your junior auditor assignment:</p>
+            <input type="text" id="name-input" placeholder="Your Name" value="Junior Auditor" maxlength="30">
+            
+            <button class="primary-btn" onclick="startChallenge()">Start Audit</button>
 
             <div class="rules-box">
-                <h3>Engagement Rules 📝</h3>
-                <ol>
-                    <li>You begin with a starting score of **100 Points**.</li>
-                    <li>**Correct Answer:** Gain **+10 Points**.</li>
-                    <li>**Incorrect/Skipped Answer:** Lose **-5 Points**.</li>
-                    <li>**Use a Hint:** Lose **-2 Points** instantly.</li>
-                    <li>The 'NEXT' button acts as a **Skip** button until you answer, incurring a **-5 point penalty** if used.</li>
-                    <li>You can **navigate** to any completed/skipped question via the side panel.</li>
-                    <li>**Calculus/Calculation** questions require a numerical answer (rounded to the nearest whole number unless specified).</li>
+                <h2>Game Rules (Audit)</h2>
+                <ol style="padding-left: 20px;">
+                    <li>The Mission: A company's Income Statement has been drafted, but contains eight intentional errors.</li>
+                    <li>Classification Fix: Click on light yellow items. Select the correct category to move the item.</li>
+                    <li>Numerical Fix: Click on light red (dashed border) items. Input the correct value (use a minus sign for expenses).</li>
+                    <li>HINT! Click the ❓ button next to any item to get an educational explanation of the concept.</li>
+                    <li>Scoring: You get 1 point for each successfully fixed error (8 points total).</li>
                 </ol>
             </div>
-
-            <button id="start-game-button">START ENGAGEMENT ></button>
         </div>
 
-        <div id="game-area" style="display: none;">
+        <!-- Game Screen (Hidden until started) -->
+        <div id="game-screen">
+            <h1 id="game-title"></h1>
+            <div id="score-display" style="text-align:right; font-weight:bold; margin-bottom:10px; font-size:1.1em;">Errors Fixed: 0/8</div>
+
+            <div class="statement-container">
+                <div id="statement-structure">
+                    
+                    <!-- REVENUE SECTION -->
+                    <div id="revenue-section" class="statement-section" data-section-name="Revenue">
+                        <div class="section-title">Revenue</div>
+                        <div class="line-items-container"></div>
+                    </div>
+                    
+                    <!-- COGS SECTION -->
+                    <div id="cogs-section" class="statement-section" data-section-name="COGS">
+                        <div class="section-title">Cost of Goods Sold (COGS)</div>
+                        <div class="line-items-container"></div>
+                    </div>
+                    
+                    <div id="gross-profit" class="total-line">
+                        <span>Gross Profit</span>
+                        <span id="value-GrossProfit">0</span>
+                    </div>
+
+                    <!-- OPERATING EXPENSES SECTION -->
+                    <div id="opex-section" class="statement-section" data-section-name="OpEx">
+                        <div class="section-title">Operating Expenses (OpEx)</div>
+                        <div class="line-items-container"></div>
+                    </div>
+
+                    <div id="operating-income" class="total-line">
+                        <span>Operating Income (EBIT)</span>
+                        <span id="value-OperatingIncome">0</span>
+                    </div>
+
+                    <!-- NON-OPERATING/OTHER SECTION -->
+                    <div id="non-op-section" class="statement-section" data-section-name="Non-Op">
+                        <div class="section-title">Non-Operating / Other</div>
+                        <div class="line-items-container"></div>
+                    </div>
+
+                    <div id="net-income-final" class="net-income">
+                        <span>NET INCOME:</span>
+                        <span id="value-NetIncome">$0</span>
+                    </div>
+
+                </div>
             </div>
 
-        <div id="result-area" class="result-screen" style="display: none;">
+            <div id="feedback">
+                Find the eight misclassified or misvalued items and fix them!
             </div>
-
-        <div class="controls" id="controls-area" style="display: none;">
-            <button id="hint-button">HINT (Deduct 2 Pts)</button>
-            <button id="next-button">SKIP ></button>
+            
+            <div class="controls" style="text-align: center;">
+                <button class="primary-btn check-btn" onclick="checkNetIncome()">Verify Final Net Income 🧮</button>
+            </div>
         </div>
-
-    </div>
-
-    <div class="nav-panel" id="nav-panel" style="display: none;">
-        <h3>Question Navigation</h3>
-        <div class="nav-grid" id="nav-grid">
-            </div>
-        <p style="font-size: 0.8em; margin-top: 15px;">
-            <span style="color: var(--correct-color);">■</span> Answered &nbsp;
-            <span style="color: var(--wrong-color);">■</span> Skipped/Incomplete
-        </p>
-    </div>
-
-</div>
-
-<script>
-    // --- Game Data ---
-    const QUESTIONS = [
-        // -------------------------
-        // SECTION 1: AUDIT FUNDAMENTALS (MCQ) - 10 Questions
-        // -------------------------
-        { 
-            type: 'mcq', concept: 'Materiality', 
-            question: "The concept of 'Materiality' in an audit primarily relates to:",
-            options: ["The number of employees in the client's accounting department.", "The magnitude of an omission or misstatement that would likely influence the judgment of a reasonable user.", "The legal jurisdiction of the client.", "The average cost of a firm's audit hour."],
-            answer: "The magnitude of an omission or misstatement that would likely influence the judgment of a reasonable user.",
-            hint: "Materiality is a threshold. Think about what a financial statement user cares about."
-        },
-        { 
-            type: 'mcq', concept: 'Audit Assertions', 
-            question: "Which audit assertion is the auditor testing when checking if all recorded sales transactions actually occurred and are not fictitious?",
-            options: ["Completeness", "Valuation and Allocation", "Rights and Obligations", "Existence or Occurrence"],
-            answer: "Existence or Occurrence",
-            hint: "The question is asking if the recorded transaction truly 'exists'."
-        },
-        { 
-            type: 'mcq', concept: 'Internal Control', 
-            question: "The segregation of duties principle requires that the following functions should be performed by different people, *except*:",
-            options: ["Authorization", "Recording", "Custody of Assets", "Planning and Budgeting"],
-            answer: "Planning and Budgeting",
-            hint: "Segregation of duties focuses on the three major transactional roles: Authorization, Recording, and Custody."
-        },
-        { 
-            type: 'mcq', concept: 'Audit Risk Model', 
-            question: "According to the Audit Risk Model ($AR = IR \\times CR \\times DR$), if the auditor assesses both Inherent Risk (IR) and Control Risk (CR) as high, what must the auditor do to achieve an acceptable level of Audit Risk (AR)?",
-            options: ["Increase Detection Risk (DR)", "Decrease Detection Risk (DR)", "Increase Materiality", "Decrease Substantive Testing"],
-            answer: "Decrease Detection Risk (DR)",
-            hint: "If the risk of misstatement is high internally (IR * CR), the auditor must do MORE work to lower their chance of missing it (DR)."
-        },
-        { 
-            type: 'mcq', concept: 'Revenue Recognition (ASC 606)', 
-            question: "Which of the following is the final step in the five-step model for Revenue Recognition (ASC 606)?",
-            options: ["Identify the contract with the customer.", "Identify the performance obligations in the contract.", "Allocate the transaction price to the performance obligations.", "Recognize revenue when (or as) the entity satisfies a performance obligation."],
-            answer: "Recognize revenue when (or as) the entity satisfies a performance obligation.",
-            hint: "The last step is always the payoff, or the actual recognition of the revenue."
-        },
-        { 
-            type: 'mcq', concept: 'Cash Basis vs. Accrual Basis', 
-            question: "Under the Accrual Basis of Accounting, revenue is recognized when:",
-            options: ["Cash is received from the customer.", "The related expense is incurred.", "The performance obligation is satisfied.", "The sales order is placed."],
-            answer: "The performance obligation is satisfied.",
-            hint: "Accrual accounting ignores the timing of cash and focuses on earning/incurring."
-        },
-        { 
-            type: 'mcq', concept: 'Confirmations', 
-            question: "A 'Positive Confirmation' for Accounts Receivable is considered a more reliable audit procedure than a 'Negative Confirmation' because:",
-            options: ["It is less expensive to perform.", "It requires a response in all circumstances, providing evidence of existence.", "It is only sent to customers with large balances.", "It is the only way to test the valuation assertion."],
-            answer: "It requires a response in all circumstances, providing evidence of existence.",
-            hint: "The key is in the 'Positive' nature—it requires a specific action (a reply) from the respondent to be valid."
-        },
-        { 
-            type: 'mcq', concept: 'Fixed Assets', 
-            question: "When auditing Fixed Assets, the auditor is most likely to vouch a sample of *additions* to which document to test the 'Existence' assertion?",
-            options: ["Depreciation schedules.", "Sales invoices.", "Vendor invoices and title documents.", "Shipping documents."],
-            answer: "Vendor invoices and title documents.",
-            hint: "To prove an asset exists and is owned, you need the documentation of the purchase and ownership."
-        },
-        { 
-            type: 'mcq', concept: 'Working Papers', 
-            question: "Which of the following describes the primary purpose of audit working papers?",
-            options: ["To assist the client in preparing financial statements.", "To provide a basis for the firm's partner compensation.", "To document the procedures performed, evidence obtained, and conclusions reached.", "To publicly disclose the audit findings."],
-            answer: "To document the procedures performed, evidence obtained, and conclusions reached.",
-            hint: "The working papers are the official record of the *work* done by the auditor."
-        },
-        { 
-            type: 'mcq', concept: 'Ethical Standards', 
-            question: "Maintaining an attitude that includes a questioning mind and a critical assessment of audit evidence is defined as:",
-            options: ["Due professional care", "Independence in fact", "Professional judgment", "Professional skepticism"],
-            answer: "Professional skepticism",
-            hint: "It’s about being wary and always questioning, not just careful."
-        },
-        // -------------------------
-        // SECTION 2: BASIC TAXATION (MCQ) - 5 Questions
-        // -------------------------
-        { 
-            type: 'mcq', concept: 'Taxable Income', 
-            question: "Which of the following is typically a *tax credit* (direct reduction of tax liability) rather than a *tax deduction* (reduction of taxable income)?",
-            options: ["Interest on a home mortgage", "Charitable contributions", "Child and Dependent Care expenses", "State and local taxes (SALT)"],
-            answer: "Child and Dependent Care expenses",
-            hint: "Credits are dollar-for-dollar reductions and are generally reserved for specific social or economic incentives."
-        },
-        { 
-            type: 'mcq', concept: 'Deductibility', 
-            question: "For a calendar year corporation, a prepayment made on December 28th for next year's rent (January and February) should be generally:",
-            options: ["Fully deductible in the current year.", "Deductible only in the next year (following the 12-month rule).", "50% deductible in the current year and 50% in the next.", "Not deductible until paid in cash."],
-            answer: "Deductible only in the next year (following the 12-month rule).",
-            hint: "Tax law generally requires an expenditure to be deductible when the benefit is fully used (Accrual/Economic performance), though there are exceptions like the 12-month rule for prepayments."
-        },
-        { 
-            type: 'mcq', concept: 'Basis', 
-            question: "If an individual purchases stock for $5,000, and later sells it for $7,500, what is the *tax basis* used to calculate the gain?",
-            options: ["$7,500 (Selling Price)", "$2,500 (The Gain)", "$5,000 (Cost)", "$0"],
-            answer: "$5,000 (Cost)",
-            hint: "Tax Basis is generally your cost in the property."
-        },
-        { 
-            type: 'mcq', concept: 'Capital Assets', 
-            question: "Which of the following is generally *NOT* considered a capital asset for tax purposes?",
-            options: ["Personal car", "A collectible painting held for investment", "Inventory held for sale to customers", "Stocks and bonds"],
-            answer: "Inventory held for sale to customers",
-            hint: "Capital assets are usually defined by what they *exclude*—things like inventory, accounts receivable, and property used in a trade or business."
-        },
-        { 
-            type: 'mcq', concept: 'Tax Periods', 
-            question: "The vast majority of individual income taxpayers in the US operate under which tax year?",
-            options: ["Fiscal year", "Calendar year", "52-53 week year", "Statutory year"],
-            answer: "Calendar year",
-            hint: "Think about when the typical person files their Form 1040."
-        },
-        // -------------------------
-        // SECTION 3: FINANCIAL REPORTING (MCQ) - 5 Questions
-        // -------------------------
-        { 
-            type: 'mcq', concept: 'Lease Accounting (ASC 842)', 
-            question: "Under the new lease standard (ASC 842), a lessee must generally recognize which of the following on its balance sheet for most leases?",
-            options: ["Lease Expense", "Right-of-Use (ROU) Asset and Lease Liability", "Contingent Rent Asset", "Lease Receivable and Unearned Revenue"],
-            answer: "Right-of-Use (ROU) Asset and Lease Liability",
-            hint: "ASC 842's main goal was to bring operating leases onto the balance sheet using a specific asset and liability."
-        },
-        { 
-            type: 'mcq', concept: 'Statement of Cash Flows', 
-            question: "The payment of a cash dividend would be classified in which section of the Statement of Cash Flows?",
-            options: ["Operating Activities", "Investing Activities", "Financing Activities", "Non-Cash Activities"],
-            answer: "Financing Activities",
-            hint: "Financing activities involve transactions with owners (stock, dividends) and creditors (debt, repayments)."
-        },
-        { 
-            type: 'mcq', concept: 'Inventory Valuation', 
-            question: "Which GAAP principle requires that inventory should be reported at the lower of cost and net realizable value (LCNRV)?",
-            options: ["The Going Concern principle", "The Conservatism principle", "The Revenue Recognition principle", "The Full Disclosure principle"],
-            answer: "The Conservatism principle",
-            hint: "Conservatism is the idea of anticipating losses but not gains."
-        },
-        { 
-            type: 'mcq', concept: 'Non-Cash Transactions', 
-            question: "Which of the following is a classic example of a significant *non-cash* transaction that must be disclosed?",
-            options: ["Issuing stock to pay off a bond.", "Paying cash for a new piece of equipment.", "Recording depreciation expense.", "Writing off an uncollectible account."],
-            answer: "Issuing stock to pay off a bond.",
-            hint: "This is a major financing and investing event that doesn't involve cash but affects the financial position."
-        },
-        { 
-            type: 'mcq', concept: 'Balance Sheet Classification', 
-            question: "For a typical company, Accounts Payable is classified as:",
-            options: ["Non-Current Asset", "Current Liability", "Non-Current Liability", "Equity"],
-            answer: "Current Liability",
-            hint: "Accounts Payable represents short-term debts to vendors/suppliers, typically due within a year."
-        },
-        // -------------------------
-        // SECTION 4: CALCULATION/HIGHER-LEVEL TASKS - 5 Questions
-        // -------------------------
-        {
-            type: 'task', concept: 'Present Value of an Annuity',
-            question: "Calculate the **Present Value** of an annuity that pays **$1,000** at the end of each year for **5 years**, assuming a discount rate of **8%**. (Round to the nearest whole dollar).",
-            answer: "3993", // $1,000 * PVOA factor of 3.99271 = 3992.71
-            hint: "Use the Present Value of an Ordinary Annuity formula or a factor table: $PV = PMT \\times [\\frac{1 - (1+r)^{-n}}{r}]$"
-        },
-        {
-            type: 'task', concept: 'MACRS Tax Depreciation',
-            question: "A company purchased equipment for **$100,000**. The equipment is 7-year MACRS property. Using the **200% declining balance** method, calculate the **Year 1 depreciation deduction**. (MACRS Half-Year Convention factor for 7-year property is 14.29%). Round to nearest whole dollar.",
-            answer: "14290", // $100,000 * 14.29% = 14,290
-            hint: "MACRS Year 1 depreciation for 200% DB uses the straight-line rate (1/7 * 2 = 28.57%) multiplied by the Half-Year Convention (1/2), resulting in the given factor (14.29%)."
-        },
-        {
-            type: 'task', concept: 'Effective Interest Rate Method',
-            question: "A company issued a **$100,000** bond with a **5% stated rate** when the market rate was **6%**. The first interest payment is **$5,000** ($100,000 * 5%). Using the Effective Interest Method, calculate the amount of **interest expense** to be recorded in the first period, assuming the bond was issued at **$95,788** (rounded). (Round to the nearest whole dollar).",
-            answer: "5747", // $95,788 * 6% = $5,747.28
-            hint: "Interest Expense is calculated by multiplying the **Carrying Value** of the bond (Issue Price) by the **Market Interest Rate**."
-        },
-        {
-            type: 'task', concept: 'Bad Debt Percentage of Sales',
-            question: "Total credit sales for the year were **$500,000**. Management estimates that **3%** of credit sales will be uncollectible. The Allowance for Doubtful Accounts had a beginning balance of **$500** (credit). Calculate the **Bad Debt Expense** for the year.",
-            answer: "15000", // $500,000 * 3% = $15,000 (Expense calculation ignores the beginning balance)
-            hint: "The percentage of sales method calculates the required **expense**. The existing allowance balance is irrelevant to this calculation."
-        },
-        {
-            type: 'task', concept: 'Basic Time Value of Money (PV)',
-            question: "Calculate the **Present Value** of a single cash flow of **$20,000** to be received in **3 years**, assuming a discount rate of **7%**. (Round to the nearest whole dollar).",
-            answer: "16326", // $20,000 * (1 / (1 + 0.07)^3) = $16,325.95
-            hint: "Use the Present Value of a Single Sum formula: $PV = FV \\times (1+r)^{-n}$"
-        }
-    ];
-
-    // --- Game Variables ---
-    let playerName = "Guest";
-    let currentQuestionIndex = 0;
-    let currentScore = 100;
-    let hintUsed = false;
-    // status: 0 = Unattempted, 1 = Skipped/Incomplete, 2 = Answered Correctly, 3 = Answered Incorrectly
-    const questionStatuses = Array(QUESTIONS.length).fill(0); 
-
-    // The Ranking System
-    const RANKS = [
-        { title: "Staff I", minScore: 0 },
-        { title: "Staff II", minScore: 200 },
-        { title: "Senior I", minScore: 500 },
-        { title: "Manager", minScore: 1000 },
-        { title: "Senior Manager", minScore: 1500 },
-        { title: "Partner", minScore: 2000 }
-    ];
-
-    // --- DOM Elements ---
-    let welcomeScreen;
-    let gameArea;
-    let resultArea;
-    let scoreDisplay;
-    let rankTitleDisplay;
-    let qNumberDisplay;
-    let playerNameDisplay;
-    let nextButton;
-    let hintButton;
-    let controlsArea;
-    let startGameButton;
-    let playerNameInput;
-    let navPanel;
-    let navGrid;
-
-
-    // Function to set all DOM elements once the page is loaded
-    function setupDOMElements() {
-        welcomeScreen = document.getElementById('welcome-screen');
-        gameArea = document.getElementById('game-area');
-        resultArea = document.getElementById('result-area');
-        scoreDisplay = document.getElementById('current-score');
-        rankTitleDisplay = document.getElementById('current-rank-title');
-        qNumberDisplay = document.getElementById('q-number');
-        playerNameDisplay = document.getElementById('player-name');
-        nextButton = document.getElementById('next-button');
-        hintButton = document.getElementById('hint-button');
-        controlsArea = document.getElementById('controls-area');
-        startGameButton = document.getElementById('start-game-button');
-        playerNameInput = document.getElementById('player-name-input');
-        navPanel = document.getElementById('nav-panel');
-        navGrid = document.getElementById('nav-grid');
-
-        // Attach event listeners *after* elements are guaranteed to exist
-        if (startGameButton) startGameButton.addEventListener('click', startGame);
-        if (nextButton) nextButton.addEventListener('click', nextQuestion);
-        if (hintButton) hintButton.addEventListener('click', useHint);
-    }
-    
-    // --- Functions ---
-    function startGame() {
-        playerName = playerNameInput.value.trim() || "Trainee CPA";
-        playerNameDisplay.textContent = playerName;
-
-        welcomeScreen.style.display = 'none';
-        gameArea.style.display = 'block';
-        controlsArea.style.display = 'flex';
-        navPanel.style.display = 'block';
         
-        generateNavButtons();
-        loadQuestion(0);
-    }
+        <!-- Classification Correction Modal (Existing) -->
+        <div id="correction-modal-overlay" class="modal-overlay" onclick="hideCorrectionModal()">
+            <div class="modal-content" onclick="event.stopPropagation()">
+                <button class="modal-close-btn" onclick="hideCorrectionModal()">×</button>
+                <h3>Correction Required (Classification)</h3>
+                <p id="modal-item-name" style="font-weight:600; font-size:1.1em;"></p>
+                <p>This item is currently misclassified. Where does it correctly belong?</p>
+                
+                <div id="correction-options">
+                    <button class="category-option" data-target-category="Revenue" onclick="submitCorrection('Revenue')">Revenue</button>
+                    <button class="category-option" data-target-category="COGS" onclick="submitCorrection('COGS')">Cost of Goods Sold (COGS)</button>
+                    <button class="category-option" data-target-category="OpEx" onclick="submitCorrection('OpEx')">Operating Expenses (OpEx)</button>
+                    <button class="category-option" data-target-category="Non-Op" onclick="submitCorrection('Non-Op')">Non-Operating / Other</button>
+                </div>
+                <div id="modal-feedback" style="margin-top: 10px; font-weight: 600; color: #dc2626;"></div>
+            </div>
+        </div>
+        
+        <!-- Numerical Correction Modal (NEW) -->
+        <div id="numerical-modal-overlay" class="modal-overlay" onclick="hideNumericalCorrectionModal()">
+            <div class="modal-content" onclick="event.stopPropagation()">
+                <button class="modal-close-btn" onclick="hideNumericalCorrectionModal()">×</button>
+                <h3>Correction Required (Numerical)</h3>
+                <p id="numerical-modal-item-name" style="font-weight:600; font-size:1.1em;"></p>
+                <p>This item's value is incorrect. Enter the correct value (use a minus sign for expenses, e.g., -50000):</p>
+                
+                <input type="number" id="correct-value-input" placeholder="e.g., -50000" style="padding: 10px; border: 2px solid #10b981; border-radius: 6px; width: 100%; box-sizing: border-box; margin-bottom: 15px; font-size: 1.1em;">
 
-    function generateNavButtons() {
-        navGrid.innerHTML = '';
-        QUESTIONS.forEach((q, index) => {
-            const button = document.createElement('button');
-            button.className = 'nav-button';
-            button.textContent = index + 1;
-            button.dataset.index = index;
-            button.addEventListener('click', () => {
-                if (questionStatuses[currentQuestionIndex] !== 0) {
-                    loadQuestion(index);
-                } else {
-                    alert("Please answer or skip the current question before navigating.");
+                <button class="primary-btn check-btn" style="width:100%; margin-top:0; background-color: #10b981;" onclick="submitNumericalCorrection()">Submit Value</button>
+                
+                <div id="numerical-modal-feedback" style="margin-top: 10px; font-weight: 600; color: #dc2626;"></div>
+            </div>
+        </div>
+
+        <!-- Hint Modal (UPDATED - Now local definitions) -->
+        <div id="hint-modal-overlay" class="modal-overlay" onclick="hideHintModal()">
+            <div class="modal-content" onclick="event.stopPropagation()">
+                <button class="modal-close-btn" onclick="hideHintModal()">×</button>
+                <h3>Financial Concept Hint</h3>
+                <p id="hint-item-name" style="font-weight:600; font-size:1.1em;"></p>
+                <div id="hint-content">
+                    <!-- Definition will be placed here -->
+                </div>
+            </div>
+        </div>
+
+        
+        <!-- Results Screen (Hidden until completion) -->
+        <div id="results-screen">
+            <h1>🎉 Audit Complete! 🎉</h1>
+            <h2 id="results-greeting"></h2>
+            
+            <div class="score-card">
+                <div class="score-item">Errors Corrected: <span id="result-fixed-errors"></span>/8</div>
+                <div class="score-item">Calculated Net Income: <span id="result-net-income"></span></div>
+            </div>
+
+            <p id="final-message" style="font-size: 1.2em; margin-top: 20px; font-weight: 600; color: #065f46;"></p>
+
+            <button class="primary-btn" style="margin-top: 40px;" onclick="location.reload()">Start New Audit</button>
+        </div>
+    </div>
+    
+    <script>
+        // --- CONSTANTS & GAME DATA ---
+        
+        // --- UPDATED LINE ITEMS: 3 new errors added (item-01, item-03, item-16) ---
+        const LINE_ITEMS_DATA = [
+            // ERROR 6: NUMERICAL (Sales Revenue, initial: 1,100,000, correct: 1,000,000)
+            { id: "item-01", name: "Sales Revenue", correctCategory: "Revenue", value: 1100000, isSubtotal: false, correctValue: 1000000 },
+            
+            { id: "item-02", name: "Other Income", correctCategory: "Revenue", value: 5000, isSubtotal: false },
+            
+            // ERROR 8: NUMERICAL (COGS, initial: -350,000, correct: -300,000)
+            { id: "item-03", name: "Cost of Goods Sold", correctCategory: "COGS", value: -350000, isSubtotal: false, correctValue: -300000 },
+            
+            { id: "item-04", name: "Salaries Expense", correctCategory: "OpEx", value: -150000, isSubtotal: false },
+            { id: "item-05", name: "Rent Expense", correctCategory: "OpEx", value: -50000, isSubtotal: false },
+            
+            // ERROR 5: NUMERICAL (Marketing is OpEx, wrong value, correct value is -80000)
+            { id: "item-06", name: "Marketing Expense", correctCategory: "OpEx", value: -100000, isSubtotal: false, correctValue: -80000 }, 
+            
+            { id: "item-07", name: "Depreciation", correctCategory: "OpEx", value: -20000, isSubtotal: false },
+            
+            // ERROR 1: CLASSIFICATION (R&D is OpEx, initially placed in Non-Op)
+            { id: "item-08", name: "R&D Expense", correctCategory: "OpEx", value: -40000, isSubtotal: false },
+            
+            { id: "item-09", name: "Utilities Expense", correctCategory: "OpEx", value: -10000, isSubtotal: false },
+            { id: "item-10", name: "Consulting Fees", correctCategory: "OpEx", value: -20000, isSubtotal: false },
+            
+            { id: "item-11", name: "Gain on Sale of Asset", correctCategory: "Non-Op", value: 10000, isSubtotal: false },
+            { id: "item-12", name: "Investment Income", correctCategory: "Non-Op", value: 15000, isSubtotal: false },
+            
+            // ERROR 2: NUMERICAL (Tax is Non-Op, wrong value, correct value is -50000)
+            { id: "item-13", name: "Tax Expense", correctCategory: "Non-Op", value: -75000, isSubtotal: false, correctValue: -50000 },
+            
+            // ERROR 3: CLASSIFICATION (Interest is Non-Op, initially placed in OpEx)
+            { id: "item-14", name: "Interest Expense", correctCategory: "Non-Op", value: -25000, isSubtotal: false }, 
+
+            // ERROR 4: CLASSIFICATION (Shipping is COGS, initially placed in OpEx)
+            { id: "item-15", name: "Shipping & Handling Outbound", correctCategory: "COGS", value: -20000, isSubtotal: false },
+
+            // ERROR 7: CLASSIFICATION (Bad Debt is OpEx, initially placed in COGS)
+            { id: "item-16", name: "Bad Debt Expense", correctCategory: "OpEx", value: -15000, isSubtotal: false },
+        ];
+
+        // --- UPDATED ERROR METADATA (8 total errors) ---
+        const ERRORS_META = {
+            "item-01": { type: "numerical", initialCategory: "Revenue", correctValue: 1000000 }, // NEW
+            "item-03": { type: "numerical", initialCategory: "COGS", correctValue: -300000 },    // NEW
+            "item-06": { type: "numerical", initialCategory: "OpEx", correctValue: -80000 },     // OLD
+            "item-08": { type: "classification", initialCategory: "Non-Op", correctCategory: "OpEx" }, // OLD
+            "item-13": { type: "numerical", initialCategory: "Non-Op", correctValue: -50000 },   // OLD
+            "item-14": { type: "classification", initialCategory: "OpEx", correctCategory: "Non-Op" }, // OLD
+            "item-15": { type: "classification", initialCategory: "OpEx", correctCategory: "COGS" }, // OLD
+            "item-16": { type: "classification", initialCategory: "COGS", correctCategory: "OpEx" }, // NEW
+        };
+        
+        // Calculated Net Income when all 8 errors are fixed: $250,000
+        const CORRECT_NET_INCOME = 250000; 
+
+        // --- HARDCODED HINT DEFINITIONS (Updated with new item) ---
+        const HINT_DEFINITIONS = {
+            "Sales Revenue": "This is the primary income generated from the sale of a company's core goods or services. It is the starting point of the Income Statement and belongs in the Revenue section.",
+            "Other Income": "Income earned from non-core business activities, such as licensing fees, asset disposal, or minor grants. It's revenue but not from the main operation, so it belongs in the Revenue section.",
+            "Cost of Goods Sold": "These are the direct costs attributable to the production of the goods or services sold by the company. This includes material costs and direct labor. It belongs in the COGS section.",
+            "Salaries Expense": "Costs for compensating employees who work in general and administrative roles (like accounting or HR), which are necessary for overall business operation. It belongs in Operating Expenses (OpEx).",
+            "Rent Expense": "The cost paid to use property, such as office space or a corporate headquarters. It is an everyday cost of running the business. It belongs in Operating Expenses (OpEx).",
+            "Marketing Expense": "Costs incurred to advertise, promote, and sell the company's products or services. These are general and administrative costs. It belongs in Operating Expenses (OpEx).",
+            "Depreciation": "A non-cash expense that systematically allocates the cost of a long-term tangible asset (like machinery) over its useful life. It reflects the usage of assets in operations. It belongs in Operating Expenses (OpEx).",
+            "R&D Expense": "Costs related to investigating and developing new products or processes. This is a core part of innovation and business operations. It belongs in Operating Expenses (OpEx).",
+            "Utilities Expense": "Costs for essential services like electricity, water, and gas used in the company's offices and facilities. It belongs in Operating Expenses (OpEx).",
+            "Consulting Fees": "Costs paid to external experts for advice on business strategy, IT, legal, or other non-core operational matters. It belongs in Operating Expenses (OpEx).",
+            "Gain on Sale of Asset": "A profit realized from selling a long-term asset (like old equipment) for more than its book value. This is a singular, one-off event outside of normal operations. It belongs in the Non-Operating / Other section.",
+            "Investment Income": "Earnings generated from a company's passive, non-core investments, such as interest earned on bonds or dividends from stocks. It belongs in the Non-Operating / Other section.",
+            "Tax Expense": "The compulsory charges imposed by governmental authorities on the company's earnings. This is calculated after operating and non-operating income. It belongs in the Non-Operating / Other section.",
+            "Interest Expense": "The cost of borrowing money, usually from loans or bonds. This is a financing cost, not a core operating cost related to the main business activities. It belongs in the Non-Operating / Other section.",
+            "Shipping & Handling Outbound": "The cost of transporting finished goods from the factory or warehouse to the customer. Since it is directly necessary to make the final sale, it is considered a direct cost. It belongs in the COGS section.",
+            "Bad Debt Expense": "The estimated loss from customers who won't pay for goods or services previously sold on credit. This is a necessary general administrative cost of running a business. It belongs in Operating Expenses (OpEx)." // NEW HINT
+        };
+
+
+        let state = {
+            playerName: "Junior Auditor",
+            errorsFixed: 0,
+            totalErrors: Object.keys(ERRORS_META).length, // Now 8
+            currentPlacement: {}, 
+            currentValue: {},    
+            errorStatus: {},     
+            activeItemId: null 
+        };
+        
+        let itemElements = {};
+
+        // --- UTILITY FUNCTIONS ---
+
+        function formatCurrency(value) {
+            const formattedValue = Math.abs(value).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+            return (value < 0 ? `($${formattedValue})` : `$${formattedValue}`);
+        }
+
+        function calculateSubtotals(currentPlacement, currentValue) {
+            let totals = {
+                "Revenue": 0, "COGS": 0, "OpEx": 0, "Non-Op": 0,
+                "GrossProfit": 0, "OperatingIncome": 0, "NetIncome": 0
+            };
+
+            LINE_ITEMS_DATA.forEach(item => {
+                // Determine the category to use for summing (the category where it is currently placed)
+                const category = currentPlacement[item.id];
+                // Determine the value to use for summing (the value currently in the state)
+                const value = currentValue[item.id] !== undefined ? currentValue[item.id] : item.value;
+                
+                if (category) {
+                    totals[category] += value;
                 }
             });
-            navGrid.appendChild(button);
-        });
-        updateNavButtons();
-    }
-    
-    function updateNavButtons() {
-        const buttons = navGrid.querySelectorAll('.nav-button');
-        buttons.forEach((button, index) => {
-            button.classList.remove('current', 'answered', 'skipped');
 
-            if (index === currentQuestionIndex) {
-                button.classList.add('current');
-            } else if (questionStatuses[index] === 2 || questionStatuses[index] === 3) {
-                button.classList.add('answered'); 
-            } else if (questionStatuses[index] === 1) {
-                button.classList.add('skipped');
-            }
-        });
-    }
+            totals.GrossProfit = totals.Revenue + totals.COGS;
+            totals.OperatingIncome = totals.GrossProfit + totals.OpEx;
+            totals.NetIncome = totals.OperatingIncome + totals["Non-Op"]; 
 
-    function getRankTitle(score) {
-        for (let i = RANKS.length - 1; i >= 0; i--) {
-            if (score >= RANKS[i].minScore) {
-                return RANKS[i].title;
-            }
+            return totals;
         }
-        return RANKS[0].title;
-    }
-    
-    function updateScoreDisplay() {
-        scoreDisplay.textContent = currentScore;
-        rankTitleDisplay.textContent = getRankTitle(currentScore);
-        
-        const displayIndex = currentQuestionIndex < QUESTIONS.length ? currentQuestionIndex + 1 : QUESTIONS.length;
-        qNumberDisplay.textContent = displayIndex;
-    }
 
-    function loadQuestion(index) {
-        currentQuestionIndex = index;
+        // --- GAME FLOW FUNCTIONS ---
 
-        if (currentQuestionIndex >= QUESTIONS.length) {
-            showResults();
-            return;
+        function startChallenge() {
+            const nameInput = document.getElementById('name-input').value.trim();
+            if (nameInput) {
+                state.playerName = nameInput;
+            }
+            startGame();
         }
-        
-        const qData = QUESTIONS[currentQuestionIndex];
-        hintUsed = false;
-        
-        const isAnsweredOrSkipped = questionStatuses[currentQuestionIndex] !== 0;
 
-        hintButton.disabled = isAnsweredOrSkipped;
-        nextButton.disabled = isAnsweredOrSkipped && (currentQuestionIndex === QUESTIONS.length - 1); 
-        nextButton.textContent = isAnsweredOrSkipped ? 'NEXT >' : 'SKIP >'; 
+        function startGame() {
+            document.getElementById('start-screen').style.display = 'none';
+            document.getElementById('results-screen').style.display = 'none';
+            document.getElementById('game-screen').style.display = 'block';
+            
+            document.getElementById('game-title').textContent = `${state.playerName}'s Advanced Audit Challenge 📝`;
+            
+            state.currentPlacement = {};
+            state.currentValue = {};
+            state.errorStatus = {}; // Initialize error status map
+            state.errorsFixed = 0; 
+            itemElements = {};
 
-        let content = `
-            <div class="question-box">
-                <h2>Question ${currentQuestionIndex + 1}: ${qData.concept}</h2>
-                <p class="question-text">${qData.question}</p>
-        `;
-        
-        if (qData.type === 'mcq') {
-            content += `<ul class="options-list">`;
-            qData.options.forEach((option, idx) => {
-                content += `
-                    <li><button class="option-button" data-answer="${option}" data-index="${idx}">${option}</button></li>
-                `;
+            LINE_ITEMS_DATA.forEach(item => {
+                const errorMeta = ERRORS_META[item.id];
+                
+                // Initialize placement: If it's a classification error, place it in the initial wrong category. Otherwise, place it in the correct category.
+                state.currentPlacement[item.id] = errorMeta && errorMeta.type === 'classification' 
+                    ? errorMeta.initialCategory 
+                    : item.correctCategory; 
+                
+                // Initialize value: If it's a numerical error, use the incorrect initial value. Otherwise, use the correct value.
+                state.currentValue[item.id] = errorMeta && errorMeta.type === 'numerical'
+                    ? item.value // Initial, incorrect value
+                    : item.value; // Correct value (or initial correct value for non-error items)
+                
+                if (errorMeta) {
+                    // Items with errors are initially unfixed
+                    state.errorStatus[item.id] = false; 
+                }
             });
-            content += `</ul>`;
 
-            setTimeout(() => {
-                document.querySelectorAll('.option-button').forEach(button => {
-                    button.addEventListener('click', handleAnswer);
-                    if (isAnsweredOrSkipped) {
-                        button.classList.add('disabled');
-                        if (button.dataset.answer === qData.answer) {
-                            button.classList.add('correct');
+            // Call the unified function to render and calculate initial state
+            updateScoreAndRender(); 
+        }
+
+        /**
+         * Recalculates the score, updates the state, and triggers UI rendering and totals calculation.
+         */
+        function updateScoreAndRender() {
+            let fixedCount = 0;
+            
+            // Check every item that has a defined error in ERRORS_META
+            Object.keys(ERRORS_META).forEach(itemId => {
+                const errorMeta = ERRORS_META[itemId];
+                const currentPlacement = state.currentPlacement[itemId];
+                const currentValue = state.currentValue[itemId];
+                let isFixed = false;
+
+                if (errorMeta.type === 'classification') {
+                    // Check if placement is correct
+                    if (currentPlacement === errorMeta.correctCategory) {
+                        isFixed = true;
+                    }
+                } else if (errorMeta.type === 'numerical') {
+                    // Check if value is correct
+                    if (currentValue === errorMeta.correctValue) {
+                        isFixed = true;
+                    }
+                }
+
+                state.errorStatus[itemId] = isFixed;
+                if (isFixed) {
+                    fixedCount++;
+                }
+            });
+
+            state.errorsFixed = fixedCount;
+            renderStatement();
+            updateScoreDisplay();
+            updateTotals(calculateSubtotals(state.currentPlacement, state.currentValue));
+            
+            if (state.errorsFixed === state.totalErrors) {
+                document.getElementById('feedback').innerHTML = `CONGRATULATIONS! All ${state.totalErrors} errors have been fixed. You can now verify the final Net Income.`;
+                const checkBtn = document.querySelector('.check-btn');
+                if (checkBtn) checkBtn.style.backgroundColor = '#059669'; // Darker green for emphasis
+            }
+        }
+
+
+        function renderStatement() {
+            document.querySelectorAll('.line-items-container').forEach(container => container.innerHTML = '');
+
+            LINE_ITEMS_DATA.forEach(item => {
+                const currentCategory = state.currentPlacement[item.id];
+                const currentValue = state.currentValue[item.id];
+                const errorMeta = ERRORS_META[item.id];
+
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'line-item';
+                itemDiv.id = item.id;
+                itemDiv.setAttribute('data-correct-category', item.correctCategory);
+                itemDiv.setAttribute('data-current-category', currentCategory);
+                itemDiv.setAttribute('data-error-type', errorMeta ? errorMeta.type : 'none');
+                
+                let status = 'correct'; 
+                
+                if (errorMeta) {
+                    const isFixed = state.errorStatus[item.id];
+                    
+                    if (isFixed) {
+                        status = 'fixed';
+                    } else {
+                        // If not fixed, determine what kind of error is visible
+                        let isClassificationWrong = errorMeta.type === 'classification' && currentCategory !== errorMeta.correctCategory;
+                        let isNumericalWrong = errorMeta.type === 'numerical' && currentValue !== errorMeta.correctValue;
+
+                        // Numerical error takes visual priority if both are wrong, but we check if the error type for this item is actually classification or numerical.
+                        if (errorMeta.type === 'classification' && isClassificationWrong) {
+                            status = 'classification-error';
+                        } else if (errorMeta.type === 'numerical' && isNumericalWrong) {
+                            status = 'numerical-error';
+                        } else if (errorMeta.type === 'classification' && !isClassificationWrong && ERRORS_META[item.id].type === 'numerical' && state.currentValue[item.id] !== ERRORS_META[item.id].correctValue) {
+                             // This is a complex case where a numerical item might be incorrectly classified AND numerically wrong.
+                             // We simplify: if it's an error item and not fixed, show its primary error type.
+                             // Since our errors are clean (only one type of error per item), this is straightforward.
+                             if (errorMeta.type === 'classification' && !isFixed) status = 'classification-error';
+                             if (errorMeta.type === 'numerical' && !isFixed) status = 'numerical-error';
                         }
                     }
-                });
-            }, 0);
-        } else if (qData.type === 'task') {
-             const inputDisabled = isAnsweredOrSkipped ? 'disabled' : '';
-             const submitDisabled = isAnsweredOrSkipped ? 'disabled' : '';
-             
-             let feedbackText = '';
-             let feedbackColor = '';
-             if (isAnsweredOrSkipped) {
-                if (questionStatuses[currentQuestionIndex] === 2) {
-                    feedbackText = `CORRECT! The answer was ${qData.answer}.`;
-                    feedbackColor = 'var(--correct-color)';
-                } else if (questionStatuses[currentQuestionIndex] === 3) {
-                    feedbackText = `INCORRECT. The correct answer was ${qData.answer}.`;
-                    feedbackColor = 'var(--wrong-color)';
-                } else if (questionStatuses[currentQuestionIndex] === 1) {
-                    feedbackText = `SKIPPED. The correct answer was ${qData.answer}.`;
-                    feedbackColor = 'var(--wrong-color)';
                 }
-             }
-            
-            content += `
-                <div class="task-area">
-                    <input type="text" id="task-input" placeholder="Enter your numerical answer (e.g., 10000) or text answer..." ${inputDisabled}/>
-                    <button id="task-submit" class="option-button" ${submitDisabled}>Submit Calculation</button>
-                </div>
-                <p id="task-feedback" style="margin-top: 15px; font-weight: bold; color: ${feedbackColor};">${feedbackText}</p>
-            `;
-             setTimeout(() => {
-                const submitButton = document.getElementById('task-submit');
-                if (submitButton) submitButton.addEventListener('click', handleTaskSubmit);
-            }, 0);
+                
+                itemDiv.setAttribute('data-status', status);
+
+                // --- Item HTML Structure including the Hint Button ---
+                itemDiv.innerHTML = `
+                    <span>${item.name}</span>
+                    <div class="item-details">
+                        <button class="hint-btn" title="Get financial concept hint" onclick="event.stopPropagation(); showHintModal('${item.name}')">❓</button>
+                        <span>${formatCurrency(currentValue)}</span>
+                    </div>
+                `;
+
+                // Add click listener for correction only to error items
+                if (status.includes('error')) {
+                    itemDiv.addEventListener('click', handleItemClick);
+                } else {
+                    itemDiv.removeEventListener('click', handleItemClick);
+                    itemDiv.style.cursor = 'default';
+                }
+
+                const containerId = currentCategory.toLowerCase().replace(' ', '-') + '-section';
+                const targetContainer = document.querySelector(`#${containerId} .line-items-container`);
+                if (targetContainer) {
+                    targetContainer.appendChild(itemDiv);
+                }
+                
+                itemElements[item.id] = itemDiv; 
+            });
         }
+        
+        function handleItemClick(e) {
+            const itemDiv = e.currentTarget;
+            const status = itemDiv.getAttribute('data-status');
+            const itemName = itemDiv.querySelector('span:first-child').textContent;
 
-        content += `<div id="hint-message-area"></div></div>`;
-        gameArea.innerHTML = content;
-        updateScoreDisplay();
-        updateNavButtons();
-    }
 
-    function handleAnswer(event) {
-        if (questionStatuses[currentQuestionIndex] > 0) return;
-
-        const selectedButton = event.target;
-        const qData = QUESTIONS[currentQuestionIndex];
-        const isCorrect = selectedButton.dataset.answer === qData.answer;
-
-        document.querySelectorAll('.option-button').forEach(button => {
-            button.classList.add('disabled');
-            if (button.dataset.answer === qData.answer) {
-                button.classList.add('correct');
-            } else if (button === selectedButton) {
-                button.classList.add('incorrect');
+            if (status.includes('-error')) {
+                state.activeItemId = itemDiv.id;
+                
+                if (status === 'classification-error') {
+                    showCorrectionModal(itemName);
+                } else if (status === 'numerical-error') {
+                    showNumericalCorrectionModal(itemName);
+                }
+            } else {
+                 document.getElementById('feedback').textContent = "This item is correctly placed or already fixed. Focus on the highlighted items.";
             }
-        });
-
-        if (isCorrect) {
-            currentScore += 10;
-            questionStatuses[currentQuestionIndex] = 2; 
-        } else {
-            currentScore -= 5;
-            questionStatuses[currentQuestionIndex] = 3; 
-        }
-
-        finalizeQuestion();
-    }
-    
-    function handleTaskSubmit() {
-        if (questionStatuses[currentQuestionIndex] > 0) return;
-        
-        const qData = QUESTIONS[currentQuestionIndex];
-        const inputElement = document.getElementById('task-input');
-        const feedbackElement = document.getElementById('task-feedback');
-        const submitButton = document.getElementById('task-submit');
-        
-        // Robust cleaning for numerical/text answers
-        const userAnswer = inputElement.value.toLowerCase().replace(/[^a-z0-9-]/g, '').trim();
-        const correctAnswer = qData.answer.toLowerCase().replace(/[^a-z0-9-]/g, '').trim();
-        
-        const isCorrect = userAnswer === correctAnswer;
-
-        // Visual Feedback
-        submitButton.classList.add('disabled');
-        inputElement.disabled = true;
-        
-        if (isCorrect) {
-            feedbackElement.textContent = `CORRECT! The answer is ${qData.answer}. (+10 Pts)`;
-            feedbackElement.style.color = 'var(--correct-color)';
-            currentScore += 10;
-            questionStatuses[currentQuestionIndex] = 2; 
-        } else {
-            feedbackElement.textContent = `INCORRECT. The correct answer was ${qData.answer}. (-5 Pts)`;
-            feedbackElement.style.color = 'var(--wrong-color)';
-            currentScore -= 5;
-            questionStatuses[currentQuestionIndex] = 3; 
         }
         
-        finalizeQuestion();
-    }
+        // --- MODAL AND CORRECTION LOGIC (Classification) ---
 
-    function useHint() {
-        if (hintUsed || questionStatuses[currentQuestionIndex] > 0) return;
-        
-        currentScore -= 2;
-        hintUsed = true;
-        hintButton.disabled = true;
-
-        const qData = QUESTIONS[currentQuestionIndex];
-        const hintMessageArea = document.getElementById('hint-message-area');
-        
-        hintMessageArea.innerHTML = `<div class="hint-message">Hint: ${qData.hint}</div>`;
-        updateScoreDisplay();
-    }
-
-    function finalizeQuestion() {
-        hintButton.disabled = true;
-        nextButton.disabled = false;
-        nextButton.textContent = 'NEXT >';
-        updateScoreDisplay();
-        updateNavButtons();
-    }
-    
-    function nextQuestion() {
-        const isLastQuestion = currentQuestionIndex === QUESTIONS.length - 1;
-        
-        // If question is UNATTEMPTED (status 0), process skip penalty
-        if (questionStatuses[currentQuestionIndex] === 0) {
-            currentScore -= 5; 
-            questionStatuses[currentQuestionIndex] = 1; // Mark as Skipped/Incomplete
-            updateScoreDisplay();
-            updateNavButtons();
+        function showCorrectionModal(itemName) {
+            document.getElementById('modal-item-name').textContent = itemName;
+            document.getElementById('modal-feedback').textContent = '';
+            document.getElementById('correction-modal-overlay').classList.add('visible');
         }
 
-        // Navigate to the next question or show results if at the end
-        if (!isLastQuestion) {
-            loadQuestion(currentQuestionIndex + 1);
-        } else {
-            showResults();
-        }
-    }
-
-    function showResults() {
-        // Check if all questions are attempted (answered or skipped)
-        if (questionStatuses.some(status => status === 0)) {
-            // Find the first unattempted question index
-            const firstUnattempted = questionStatuses.findIndex(status => status === 0);
-            alert(`You must attempt or skip all questions before completing the engagement. Go to Question ${firstUnattempted + 1}.`);
-            loadQuestion(firstUnattempted);
-            return;
+        function hideCorrectionModal() {
+            state.activeItemId = null;
+            document.getElementById('correction-modal-overlay').classList.remove('visible');
         }
 
-        gameArea.style.display = 'none';
-        controlsArea.style.display = 'none';
-        navPanel.style.display = 'none';
-        resultArea.style.display = 'block';
+        function submitCorrection(chosenCategory) {
+            const itemId = state.activeItemId;
+            if (!itemId) return;
 
-        const finalRank = getRankTitle(currentScore);
-
-        let tableContent = RANKS.map(rank => {
-            const isCurrent = rank.title === finalRank;
-            const rowClass = isCurrent ? 'current-rank' : '';
-            return `<tr class="${rowClass}">
-                        <td>${rank.title}</td>
-                        <td>${rank.minScore} Pts</td>
-                    </tr>`;
-        }).join('');
-
-        resultArea.innerHTML = `
-            <h2>ENGAGEMENT COMPLETE, ${playerName.toUpperCase()}! 🎉</h2>
-            <p style="font-size: 1.5em;">Your Final Score: <strong>${currentScore} Points</strong></p>
-            <p style="font-size: 1.8em; color: var(--primary-color);">Your CPA Climb Rank: <strong>${finalRank}</strong></p>
+            const errorMeta = ERRORS_META[itemId];
             
-            <h3 style="margin-top: 40px;">CPA Ladder Ranking</h3>
-            <table class="rank-table">
-                <tr><th>Rank Title</th><th>Minimum Score</th></tr>
-                ${tableContent}
-            </table>
-            <button class="option-button" style="width: auto; margin-top: 20px;" onclick="window.location.reload()">Start New Engagement</button>
-        `;
-    }
+            if (errorMeta.type === 'classification' && chosenCategory === errorMeta.correctCategory) {
+                const itemData = LINE_ITEMS_DATA.find(i => i.id === itemId);
 
-    // This listener ensures that all the HTML elements are loaded before the JavaScript attempts
-    // to find them and attach event listeners. The script is now at the end of the <body> for safety.
-    document.addEventListener('DOMContentLoaded', setupDOMElements);
+                // 1. Update the state
+                state.currentPlacement[itemId] = chosenCategory;
+                
+                // 2. Recalculate score, render, and update totals/feedback
+                updateScoreAndRender(); 
 
-</script>
+                document.getElementById('feedback').innerHTML = `SUCCESS! You correctly identified the ${itemData.name} as a ${chosenCategory} item.`;
+
+                hideCorrectionModal();
+            } else if (errorMeta.type === 'numerical') {
+                document.getElementById('modal-feedback').textContent = `This item has a numerical error, not a classification error. Use the red-dashed correction interface.`;
+            } else {
+                document.getElementById('modal-feedback').textContent = `Incorrect! The ${chosenCategory} category is not where this item belongs. Try again.`;
+            }
+        }
+
+        // --- MODAL AND CORRECTION LOGIC (Numerical) ---
+
+        function showNumericalCorrectionModal(itemName) {
+            const itemId = state.activeItemId;
+            const currentValue = state.currentValue[itemId];
+            
+            document.getElementById('numerical-modal-item-name').textContent = itemName;
+            document.getElementById('numerical-modal-feedback').textContent = '';
+            document.getElementById('correct-value-input').value = currentValue; 
+            document.getElementById('numerical-modal-overlay').classList.add('visible');
+        }
+
+        function hideNumericalCorrectionModal() {
+            state.activeItemId = null;
+            document.getElementById('numerical-modal-overlay').classList.remove('visible');
+        }
+
+        function submitNumericalCorrection() {
+            const itemId = state.activeItemId;
+            if (!itemId) return;
+
+            const errorMeta = ERRORS_META[itemId];
+            const inputElement = document.getElementById('correct-value-input');
+            
+            const newValue = parseInt(inputElement.value, 10);
+            
+            if (isNaN(newValue)) {
+                document.getElementById('numerical-modal-feedback').textContent = 'Please enter a valid number (e.g., -50000).';
+                return;
+            }
+            
+            if (errorMeta.type === 'numerical' && newValue === errorMeta.correctValue) {
+                const itemData = LINE_ITEMS_DATA.find(i => i.id === itemId);
+                
+                // 1. Update the state
+                state.currentValue[itemId] = newValue;
+
+                // 2. Recalculate score, render, and update totals/feedback
+                updateScoreAndRender();
+                
+                document.getElementById('feedback').innerHTML = `SUCCESS! You corrected the ${itemData.name} value to ${formatCurrency(newValue)}.`;
+
+                hideNumericalCorrectionModal();
+            } else if (errorMeta.type === 'classification') {
+                document.getElementById('numerical-modal-feedback').textContent = `This item has a classification error, not a numerical error. Use the yellow correction interface.`;
+            } else {
+                document.getElementById('numerical-modal-feedback').textContent = `Incorrect! The value ${formatCurrency(newValue)} is not the correct amount. Try again.`;
+            }
+        }
+
+        // --- MODAL AND CORRECTION LOGIC (Hint - NOW LOCAL) ---
+
+        function showHintModal(itemName) {
+            const hintModal = document.getElementById('hint-modal-overlay');
+            const hintContent = document.getElementById('hint-content');
+            
+            const definition = HINT_DEFINITIONS[itemName] || "Definition not found for this item.";
+            
+            document.getElementById('hint-item-name').textContent = itemName;
+            hintContent.innerHTML = `<p>${definition}</p>`;
+            hintModal.classList.add('visible');
+        }
+
+        function hideHintModal() {
+            document.getElementById('hint-modal-overlay').classList.remove('visible');
+        }
+
+        
+        // --- DISPLAY AND SCORING FUNCTIONS ---
+
+        function updateTotals(totals) {
+            document.getElementById('value-GrossProfit').textContent = formatCurrency(totals.GrossProfit);
+            document.getElementById('value-OperatingIncome').textContent = formatCurrency(totals.OperatingIncome);
+            document.getElementById('value-NetIncome').textContent = formatCurrency(totals.NetIncome);
+
+            const netIncomeDiv = document.getElementById('net-income-final');
+            if (state.errorsFixed < state.totalErrors) {
+                netIncomeDiv.style.border = '3px solid #f59e0b';
+                netIncomeDiv.style.color = '#b45309';
+            } else {
+                netIncomeDiv.style.border = '3px solid #10b981';
+                netIncomeDiv.style.color = '#065f46';
+            }
+        }
+
+        function updateScoreDisplay() {
+            document.getElementById('score-display').textContent = `Errors Fixed: ${state.errorsFixed}/${state.totalErrors}`;
+        }
+        
+        function checkNetIncome() {
+            if (state.errorsFixed < state.totalErrors) {
+                document.getElementById('feedback').innerHTML = `Incomplete Audit! You must fix all ${state.totalErrors} errors before verifying the Net Income.`;
+                return;
+            }
+
+            const finalTotals = calculateSubtotals(state.currentPlacement, state.currentValue);
+            
+            let scoreMessage = "Incorrect Net Income";
+            let finalMessage = "";
+
+            if (finalTotals.NetIncome === CORRECT_NET_INCOME) {
+                scoreMessage = "Correct Net Income";
+                finalMessage = "Perfect Audit! You fixed all classification and numerical errors, resulting in the correct final Net Income ($250,000). Excellent work, Senior Auditor!";
+            } else {
+                scoreMessage = "Incorrect Net Income";
+                finalMessage = `Audit Incomplete. While you fixed all 8 errors, the calculated Net Income did not match the expected value of ${formatCurrency(CORRECT_NET_INCOME)}. Double-check your numerical inputs!`;
+            }
+            
+            showResults(scoreMessage, finalMessage);
+        }
+
+        function showResults(scoreMessage, finalMessage) {
+            document.getElementById('game-screen').style.display = 'none';
+            document.getElementById('results-screen').style.display = 'block';
+
+            document.getElementById('results-greeting').textContent = `Hello, ${state.playerName}! Your advanced audit is complete.`;
+            document.getElementById('result-fixed-errors').textContent = state.errorsFixed;
+            document.getElementById('result-net-income').textContent = scoreMessage;
+            document.getElementById('final-message').textContent = finalMessage;
+            document.getElementById('results-net-income').textContent = "Final Net Income: " + formatCurrency(calculateSubtotals(state.currentPlacement, state.currentValue).NetIncome);
+        }
+
+        // Initialize game on load
+        document.addEventListener('DOMContentLoaded', () => {
+             document.getElementById('game-screen').style.display = 'none';
+             document.getElementById('results-screen').style.display = 'none';
+             document.getElementById('start-screen').style.display = 'block';
+        });
+    </script>
 </body>
 </html>
