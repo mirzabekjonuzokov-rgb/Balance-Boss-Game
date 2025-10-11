@@ -3,650 +3,766 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Profit Path - Financial Runner</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Cash Flow Detective Quiz (Final Challenge)</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
-        body { font-family: 'Inter', sans-serif; background-color: #0d1a29; }
-        
-        /* Custom styles for the game canvas */
-        #gameCanvas {
-            border: 6px solid #1e3a8a; /* Dark Blue border */
-            background: linear-gradient(to bottom, #f0f9ff 0%, #ffffff 100%); /* Light sky background */
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
-            touch-action: manipulation;
-        }
-        .text-shadow-light {
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
-        }
-        .btn-game {
-            transition: all 0.15s ease;
-            box-shadow: 0 4px #047857; /* Darker green shadow */
-        }
-        .btn-game:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px #047857;
-        }
-        .btn-game:active {
-            box-shadow: 0 0 #047857;
-            transform: translateY(4px);
+        /* --- Root and Body Styles --- */
+        :root {
+            --color-operating: #4CAF50; /* Green */
+            --color-investing: #FF9800; /* Orange */
+            --color-financing: #2196F3; /* Blue */
+            --color-primary: #19488a;
+            --color-background: #f4f7f9;
+            --color-text: #333;
+            --color-card-bg: #fff;
+            --color-success: #28a745;
+            --color-error: #dc3545;
+            --color-warning: #ffc107;
+            --color-light-gray: #f0f0f0;
         }
 
-        /* Responsive overlay positioning */
-        .overlay-center {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: var(--color-background);
+            color: var(--color-text);
+            text-align: center;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--color-card-bg);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        h1 {
+            color: var(--color-primary);
+            margin-bottom: 20px;
+        }
+
+        /* --- Global Component Styles --- */
+        .hidden { display: none !important; }
+
+        button, input[type="button"] {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.1s;
+            margin: 5px;
+        }
+
+        button:hover:not(:disabled) { transform: translateY(-1px); }
+
+        /* Disable state for all buttons */
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .btn-primary {
+            background-color: var(--color-primary);
+            color: white;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+        
+        /* --- Game Screen --- */
+        #game-screen {
+            text-align: left;
+        }
+
+        .scoreboard {
+            display: flex;
+            justify-content: space-between;
+            background-color: #e6f0ff;
+            padding: 10px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 1.1em;
+            color: var(--color-primary);
+            font-weight: bold;
+        }
+        
+        /* --- Question Area --- */
+        #question-area {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        #question-card {
+            flex-grow: 1;
+            border: 2px solid var(--color-primary);
+            padding: 25px;
+            border-radius: 8px;
+            font-size: 1.5em;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease-out; 
+            background-color: var(--color-card-bg);
+        }
+
+        /* --- Hint & Category Styles --- */
+        #hint-display {
+            background-color: #fffbe6;
+            border: 1px solid #ffcc00;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-size: 1em;
+            color: #666;
+            text-align: left;
+        }
+        
+        .category-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            flex-grow: 1;
+        }
+
+        .category-btn {
+            padding: 15px 10px;
+            color: white;
+            font-weight: bold;
+            font-size: 1.1em;
+            width: 100%;
+            margin: 0;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        #btn-operating { background-color: var(--color-operating); }
+        #btn-investing { background-color: var(--color-investing); }
+        #btn-financing { background-color: var(--color-financing); }
+
+        .help-btn {
+            background-color: #6c757d;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            font-size: 1.2em;
+            padding: 0;
+            margin: 0;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* --- Navigation Table Styles (General) --- */
+        #question-nav, #review-nav {
+            margin-top: 20px;
+            padding: 15px;
+            border-top: 1px solid #ddd;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .nav-btn {
+            width: 35px;
+            height: 35px;
+            padding: 0;
+            font-size: 0.9em;
+            border-radius: 50%;
+            border: 2px solid var(--color-primary);
+            background-color: white;
+            color: var(--color-primary);
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+        /* Navigation Button States */
+        .nav-current {
+            background-color: var(--color-primary);
+            color: white;
+        }
+        .nav-correct {
+            background-color: var(--color-success);
+            color: white;
+            border-color: var(--color-success);
+        }
+        .nav-incorrect {
+            background-color: var(--color-error);
+            color: white;
+            border-color: var(--color-error);
+        }
+        .nav-hinted {
+            background-color: var(--color-warning);
+            color: var(--color-text);
+            border-color: var(--color-warning);
+        }
+        .nav-unanswered {
+            background-color: var(--color-light-gray);
+            color: var(--color-text);
+            border-color: var(--color-light-gray);
+        }
+
+        /* --- Finish Button in Game Screen --- */
+        #finish-quiz-btn {
+            background-color: var(--color-error);
+            color: white;
+            font-size: 1.2em;
+            padding: 12px 25px;
+            margin-top: 15px;
+        }
+
+        /* --- Review Screen Improvements --- */
+        #review-display {
+            border: 2px solid var(--color-primary);
+            padding: 20px;
+            border-radius: 8px;
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        #review-status {
+            font-size: 1.3em;
+            font-weight: bold;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 10px;
+        }
+        .status-correct { color: var(--color-success); }
+        .status-incorrect { color: var(--color-error); }
+        .status-hinted { color: var(--color-warning); }
+        .status-unanswered { color: #6c757d; }
+
+        .review-details p {
+            margin: 5px 0;
+            line-height: 1.4;
+        }
+
+        /* --- Modal Styles (Definitions) --- */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: var(--color-card-bg);
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 600px;
             width: 90%;
-            max-width: 450px;
+            text-align: left;
+            position: relative;
+        }
+
+        .modal-section {
+            padding: 8px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+        .cfo { border-left: 5px solid var(--color-operating); background-color: #e8f5e9; }
+        .cfi { border-left: 5px solid var(--color-investing); background-color: #fff3e0; }
+        .cff { border-left: 5px solid var(--color-financing); background-color: #e3f2fd; }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 28px;
+            font-weight: bold;
+            color: #aaa;
+            cursor: pointer;
+            line-height: 28px;
         }
     </style>
 </head>
-<body class="p-4 sm:p-8 flex items-center justify-center min-h-screen">
+<body>
 
-    <!-- Firestore Configuration Placeholders (Required for Canvas Environment) -->
-    <script type="module">
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
-        const authToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+    <div class="container">
+        <h1>💰 Cash Flow Detective 🕵️</h1>
+        <p style="font-size: 0.9em; color: var(--color-error); font-weight: bold;">
+            ⚠️ Rules: Correct Answer = +2 Pts. | Wrong Answer = -1 Pt. | Question Hint = -2 Pts. (and locks question!)
+        </p>
 
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-        
-        let app, db, auth;
-        try {
-            app = initializeApp(firebaseConfig);
-            db = getFirestore(app);
-            auth = getAuth(app);
+        <div id="start-screen">
+            <h2>Welcome! Enter your name to begin.</h2>
+            <input type="text" id="student-name" placeholder="Your Name" required>
+            <button class="btn-primary" onclick="startQuiz()">Next</button>
+        </div>
+
+        <div id="game-screen" class="hidden">
+            <div class="scoreboard">
+                <span>Student: <span id="display-student-name"></span></span>
+                <span>Question <span id="current-q-num">1</span> of <span id="total-q-count">20</span></span>
+                <span>Score: <span id="score">0</span> Points</span>
+            </div>
             
-            if (authToken) {
-                signInWithCustomToken(auth, authToken).catch(e => console.error("Firebase Auth Error:", e));
-            } else {
-                signInAnonymously(auth).catch(e => console.error("Firebase Anonymous Auth Error:", e));
-            }
-        } catch (e) {
-            console.warn("Firebase initialization skipped:", e);
-        }
-    </script>
-    
-    <!-- Main Game Container -->
-    <div class="w-full max-w-4xl flex flex-col items-center space-y-4 relative">
-        <h1 class="text-4xl sm:text-5xl font-extrabold text-teal-400 text-shadow-light uppercase tracking-widest">
-            The Profit Path
-        </h1>
-        <p class="text-teal-200 text-lg">A Financial Runner Game</p>
+            <div id="question-area">
+                <div id="question-card">Transaction description will appear here.</div>
+                <button id="question-hint-btn" class="help-btn" style="background-color: var(--color-warning);" onclick="useQuestionHint()">?</button>
+            </div>
 
-        <!-- Scoreboard / Status Bar -->
-        <div class="w-full flex justify-between p-3 bg-gray-800 rounded-xl shadow-lg border border-gray-700">
-            <div id="playerNameDisplay" class="text-xl font-bold text-blue-400">
-                Player: Player
+            <div id="hint-display" class="hidden"></div>
+
+            <p style="font-size: 1.2em; font-weight: bold; margin-bottom: 10px;">Which activity is this?</p>
+            <div class="action-buttons">
+                <div class="category-group">
+                    <button id="btn-operating" class="category-btn" onclick="submitAnswer('Operating')">Operating (CFO)</button>
+                    <button class="help-btn" onclick="showDefinitionModal()">?</button>
+                </div>
+                <div class="category-group">
+                    <button id="btn-investing" class="category-btn" onclick="submitAnswer('Investing')">Investing (CFI)</button>
+                    <button class="help-btn" onclick="showDefinitionModal()">?</button>
+                </div>
+                <div class="category-group">
+                    <button id="btn-financing" class="category-btn" onclick="submitAnswer('Financing')">Financing (CFF)</button>
+                    <button class="help-btn" onclick="showDefinitionModal()">?</button>
+                </div>
             </div>
-            <div id="netIncomeDisplay" class="text-xl font-bold text-green-400">
-                Net Income: $0
-            </div>
-            <div id="strikesDisplay" class="text-xl font-bold text-red-400">
-                Losses: 0 / 3
-            </div>
+
+            <button id="finish-quiz-btn" onclick="showResults()">Finish Quiz & View Results</button>
+
+            <div id="question-nav">
+                </div>
         </div>
 
-        <!-- Game Canvas -->
-        <canvas id="gameCanvas" width="800" height="400" class="w-full max-w-full rounded-xl"></canvas>
-
-        <!-- Game Overlay (Multiple States) -->
-        <div id="gameOverlay" class="absolute inset-0 bg-black bg-opacity-70 flex items-center justify-center rounded-xl transition-opacity duration-300 pointer-events-none opacity-0">
-            <div id="messageBox" class="overlay-center bg-white p-6 sm:p-8 rounded-xl shadow-2xl text-center">
-                
-                <!-- Content for different states will be injected here -->
-                
-            </div>
+        <div id="results-screen" class="hidden">
+            <h2>Quiz Results for <span id="results-student-name"></span></h2>
+            <p style="font-size: 1.5em;">Final Score: <strong id="final-score">0</strong> Points</p>
+            <p style="font-size: 1.2em; color: var(--color-success);">Correct: <span id="correct-count">0</span> | Incorrect: <span id="incorrect-count">0</span> | Hinted: <span id="hinted-count">0</span></p>
+            
+            <button class="btn-primary" onclick="startReviewScreen()">Review Quiz</button>
+            <button class="btn-secondary" onclick="window.location.reload()">Start New Quiz</button>
         </div>
-        
-        <!-- Controls Indicator -->
-        <div class="text-gray-400 text-sm mt-4 p-2 bg-gray-800 rounded-lg">
-            Controls: [SPACE] or [↑] to Jump | [↓] to Duck
+
+        <div id="review-screen" class="hidden">
+            <h2>Detailed Review</h2>
+            
+            <div id="review-display">
+                <h3 id="review-q-title">Q1: Transaction</h3>
+                <div id="review-status" class="status-unanswered">Status: Unanswered (0 Pts)</div>
+                <div class="review-details">
+                    <p><strong>Your Answer:</strong> <span id="review-your-answer">N/A</span></p>
+                    <p><strong>Correct Answer:</strong> <span id="review-correct-answer">N/A</span></p>
+                    <p><strong>Explanation:</strong> <span id="review-explanation">N/A</span></p>
+                </div>
+            </div>
+
+            <div id="review-nav">
+                </div>
+
+            <button class="btn-primary" onclick="showResults()">Back to Summary</button>
+        </div>
+
+    </div>
+
+    <div id="help-modal" class="modal hidden" onclick="closeHelpModal(event)">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeHelpModal(event)">&times;</span>
+            <h3>Cash Flow Statement Activity Definitions</h3>
+
+            <div class="modal-section cfo">
+                <h4>Operating Activities (CFO)</h4>
+                <p>Cash flows related to the **normal day-to-day business operations** of the company, including primary revenue and expense items. This includes cash from selling goods/services, and cash paid for inventory, wages, utilities, interest, and taxes.</p>
+            </div>
+
+            <div class="modal-section cfi">
+                <h4>Investing Activities (CFI)</h4>
+                <p>Cash flows related to the **purchase or sale of long-term assets** (like Property, Plant, and Equipment - PP&E) and long-term investments in other companies or securities. Essentially, transactions affecting non-current assets.</p>
+            </div>
+
+            <div class="modal-section cff">
+                <h4>Financing Activities (CFF)</h4>
+                <p>Cash flows related to transactions with **owners (shareholders)** and **creditors (lenders)**. This includes issuing stock/debt (inflows) and paying dividends, repaying debt principal, or buying back stock (outflows).</p>
+            </div>
         </div>
     </div>
 
     <script>
-        // --- GAME CORE LOGIC ---
-
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
-        const gameOverlay = document.getElementById('gameOverlay');
-        const messageBox = document.getElementById('messageBox');
-        const netIncomeDisplay = document.getElementById('netIncomeDisplay');
-        const strikesDisplay = document.getElementById('strikesDisplay');
-        const playerNameDisplay = document.getElementById('playerNameDisplay');
-        
-        let GROUND_Y = canvas.height - 50; // Dynamic ground position
-        let gameState = {
-            playerName: 'Player',
-            isRunning: false,
-            netIncome: 0,
-            strikes: 0,
-            gameSpeed: 6,
-            itemSpawnRate: 150, 
-            lastTime: 0,
-            timeSinceLastItem: 0,
-            animationFrameId: null,
-            maxStrikes: 3
-        };
-
-        const player = {
-            x: 50,
-            y: GROUND_Y - 50,
-            width: 50,
-            height: 50,
-            color: '#10b981', // Teal/Green
-            isJumping: false,
-            isDucking: false,
-            yVelocity: 0,
-            gravity: 1.8,
-            jumpStrength: -30,
-            initialHeight: 50,
-            duckHeight: 25
-        };
-
-        const items = [];
-        const itemTemplates = [
-            // Revenue (Collectibles, Positive) - High Jump to get (Y: -130)
-            { type: 'Revenue', label: 'Sales', value: 100, color: '#fcd34d', isCollectible: true, width: 30, height: 30, y: GROUND_Y - 130, draw: drawCoin },
-            { type: 'Revenue', label: 'Service', value: 50, color: '#f59e0b', isCollectible: true, width: 25, height: 25, y: GROUND_Y - 90, draw: drawCoin },
+        // --- Game Data ---
+        const ALL_TRANSACTIONS = [
+            { desc: "Received cash from customers for services rendered.", cat: "Operating", exp: "Primary revenue-generating activity from the core business." },
+            { desc: "Paid wages and salaries to employees.", cat: "Operating", exp: "Normal, day-to-day business expense." },
+            { desc: "Paid a supplier for inventory.", cat: "Operating", exp: "Normal cost of goods sold/operations." },
+            { desc: "Paid interest on a bank loan or bond.", cat: "Operating", exp: "Interest is typically classified as a core operating expense." },
+            { desc: "Paid income taxes to the government.", cat: "Operating", exp: "Taxes are required for ongoing operations." },
+            { desc: "Increased Accounts Payable (purchased inventory on credit).", cat: "Operating", exp: "Change in a current liability related to operations." },
+            { desc: "Decrease in Accounts Receivable (collected customer debt).", cat: "Operating", exp: "Change in a current asset related to operations." },
+            { desc: "Increased Inventory (purchased more goods).", cat: "Operating", exp: "Change in a current asset related to operations." },
+            { desc: "Received a refund for prepaid insurance.", cat: "Operating", exp: "Change in a current asset related to operations." },
+            { desc: "Decrease in Unearned Revenue (service delivered to customer).", cat: "Operating", exp: "Change in a current liability related to operations." },
+            { desc: "Net Income (Starting point for Indirect Method).", cat: "Operating", exp: "The base figure before adjustments for non-cash items." },
+            { desc: "Collected cash from customers in advance (Unearned Revenue).", cat: "Operating", exp: "Change in a current liability related to operations." },
+            { desc: "Paid cash for utilities expense.", cat: "Operating", exp: "Normal, day-to-day business expense." },
+            { desc: "Increase in Prepaid Expenses (paid rent for next year).", cat: "Operating", exp: "Change in a current asset related to operations." },
+            { desc: "Decrease in Taxes Payable.", cat: "Operating", exp: "Change in a current liability related to operations." },
+            { desc: "Sale of a short-term investment security (trading security).", cat: "Operating", exp: "Sale of a highly liquid, near-cash investment." },
+            { desc: "Purchase of a short-term investment security.", cat: "Operating", exp: "Purchase of a highly liquid, near-cash investment." },
+            { desc: "Gain on Sale of Equipment (non-cash adjustment).", cat: "Operating", exp: "Non-cash item; subtracted from Net Income." },
+            { desc: "Amortization of a Patent (non-cash expense).", cat: "Operating", exp: "Non-cash item; added back to Net Income." },
+            { desc: "Received interest revenue from a bond investment.", cat: "Operating", exp: "While the bond is Investing, the *income* is often classified as Operating." },
             
-            // Cost of Goods Sold (Obstacles, Negative) - Jump to avoid (Y: -50)
-            { type: 'COGS', label: 'Materials', value: -75, color: '#9d3110', isCollectible: false, width: 35, height: 50, y: GROUND_Y - 50, draw: drawJaggedObstacle },
-            { type: 'COGS', label: 'Labor', value: -50, color: '#b45309', isCollectible: false, width: 30, height: 40, y: GROUND_Y - 40, draw: drawJaggedObstacle },
-
-            // Operating Expenses (Obstacles, Negative) - Duck to avoid (Y: -80, Mid-air)
-            { type: 'OpEx', label: 'Rent', value: -150, color: '#dc2626', isCollectible: false, width: 40, height: 20, y: GROUND_Y - 100, draw: drawFlyingArrow },
-            { type: 'OpEx', label: 'Marketing', value: -75, color: '#f87171', isCollectible: false, width: 35, height: 18, y: GROUND_Y - 120, draw: drawFlyingArrow },
-
-            // Major Loss (Strike + High Penalty) - Must be avoided
-            { type: 'MajorLoss', label: 'Lawsuit', value: -500, color: '#7f1d1d', isCollectible: false, width: 60, height: 60, isMajor: true, strike: true, y: GROUND_Y - 60, draw: drawMajorLossX }
+            { desc: "Purchased a new piece of machinery for the factory.", cat: "Investing", exp: "Acquisition of a long-term asset (Property, Plant, & Equipment)." },
+            { desc: "Sold an old, unused delivery van for cash.", cat: "Investing", exp: "Sale of a long-term asset (PP&E)." },
+            { desc: "Purchased a patent (an intangible asset) from another company.", cat: "Investing", exp: "Acquisition of a long-term intangible asset." },
+            { desc: "Purchased bonds issued by another company (a long-term investment).", cat: "Investing", exp: "Acquisition of long-term non-operating financial assets." },
+            { desc: "Received cash from the sale of an office building.", cat: "Investing", exp: "Sale of a long-term asset." },
+            { desc: "Loaned money to another company.", cat: "Investing", exp: "Creation of a long-term asset (Note Receivable)." },
+            { desc: "Received repayment of a loan made to another company.", cat: "Investing", exp: "Collection of a long-term asset (Note Receivable)." },
+            { desc: "Paid cash to acquire another business.", cat: "Investing", exp: "Acquisition of a business is treated as an investing outflow." },
+            { desc: "Purchased land for future expansion.", cat: "Investing", exp: "Acquisition of a long-term asset." },
+            { desc: "Purchased a controlling interest in another company.", cat: "Investing", exp: "Acquisition of a long-term strategic asset." },
+            { desc: "Sale of a minority interest in a publicly traded company.", cat: "Investing", exp: "Sale of a long-term equity investment." },
+            { desc: "Cash paid to a vendor for a property acquisition.", cat: "Investing", exp: "Acquisition of a long-term asset." },
+            { desc: "Received cash from the government for an asset seizure.", cat: "Investing", exp: "Inflow from the disposal of a long-term asset." },
+            { desc: "Loaned money to a company officer.", cat: "Investing", exp: "Creation of a long-term asset (Note Receivable)." },
+            { desc: "Received cash as payment for insurance settlement on damaged equipment.", cat: "Investing", exp: "Inflow related to a long-term asset." },
+            { desc: "Paid for major overhaul of plant machinery (capitalized cost).", cat: "Investing", exp: "Investment in a long-term asset." },
+            
+            { desc: "Issued common stock to raise capital.", cat: "Financing", exp: "Relates to the company's equity capital structure." },
+            { desc: "Paid a dividend to shareholders.", cat: "Financing", exp: "Return of capital to equity holders." },
+            { desc: "Repaid the principal amount of a long-term bank loan.", cat: "Financing", exp: "Relates to the company's debt capital structure." },
+            { desc: "Borrowed money by issuing bonds payable.", cat: "Financing", exp: "Inflow from a long-term debt obligation." },
+            { desc: "Purchased the company's own shares (treasury stock).", cat: "Financing", exp: "Relates to the company's equity capital structure (buyback)." },
+            { desc: "Paid cash to retire a bond early.", cat: "Financing", exp: "Repayment of a debt obligation." },
+            { desc: "Received cash from issuing preferred stock.", cat: "Financing", exp: "Inflow from issuing equity." },
+            { desc: "Paid legal fees to register new stock.", cat: "Financing", exp: "Directly related to issuing equity." },
+            { desc: "Obtained a new long-term mortgage for a building.", cat: "Financing", exp: "Inflow from a long-term debt obligation." },
+            { desc: "Paid cash to reduce a line of credit principal.", cat: "Financing", exp: "Repayment of a borrowing." },
+            { desc: "Conversion of bonds to common stock (non-cash).", cat: "Financing", exp: "A non-cash transaction involving capital structure." },
+            { desc: "Paid cash to reduce long-term bonds payable.", cat: "Financing", exp: "Repayment of a long-term debt obligation." },
+            { desc: "Issued a short-term note payable.", cat: "Financing", exp: "Inflow from a borrowing." },
+            { desc: "Repaid a short-term note payable.", cat: "Financing", exp: "Repayment of a borrowing." },
+            { desc: "Payment of dividends on preferred stock.", cat: "Financing", exp: "Return of capital to equity holders." }
         ];
 
-        // --- DRAWING SHAPES (FUN AND COLORFUL) ---
+        // --- Game Variables ---
+        const QUESTION_COUNT = 20;
+        const POINTS_CORRECT = 2;
+        const POINTS_INCORRECT = -1; 
+        const POINTS_HINT_PENALTY = -2; 
+        
+        let selectedQuestions = [];
+        let studentAnswers = []; 
+        let currentQuestionIndex = 0;
+        let reviewQuestionIndex = 0;
+        let studentName = "";
+        let score = 0;
 
-        function drawBusinessIcon(x, y, w, h) {
-            // Draw a simple, stylized chart icon (Upward Trend)
-            ctx.fillStyle = '#065f46'; // Dark Teal
-            ctx.fillRect(x, y + h * 0.5, w, h * 0.5); // Base
-            ctx.fillStyle = '#10b981'; // Bright Teal
-            
-            // Draw upward bars
-            ctx.fillRect(x + 5, y + h * 0.3, 10, h * 0.7);
-            ctx.fillRect(x + 20, y, 10, h);
-            ctx.fillRect(x + 35, y + h * 0.5, 10, h * 0.5);
-            
-            // Add a white highlight line (the actual "business")
-            ctx.strokeStyle = 'white';
-            ctx.lineWidth = 3;
-            ctx.beginPath();
-            ctx.moveTo(x + 5, y + h * 0.3);
-            ctx.lineTo(x + 20, y);
-            ctx.lineTo(x + 35, y + h * 0.5);
-            ctx.stroke();
+        // --- DOM Elements ---
+        const questionCard = document.getElementById('question-card');
+        const hintDisplay = document.getElementById('hint-display');
+        const categoryButtons = document.querySelectorAll('.action-buttons .category-btn');
+        const questionHintBtn = document.getElementById('question-hint-btn');
+        const questionNav = document.getElementById('question-nav');
+        const reviewNav = document.getElementById('review-nav');
+
+        // --- Utility Functions ---
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
         }
 
-        function drawCoin(item) {
-            // Gold Coin
-            ctx.beginPath();
-            ctx.arc(item.x + item.width / 2, item.y + item.height / 2, item.width / 2, 0, Math.PI * 2);
-            ctx.fillStyle = item.color;
-            ctx.fill();
-            // Draw dollar sign
-            ctx.fillStyle = 'rgba(0,0,0,0.4)';
-            ctx.font = '16px Inter';
-            ctx.textAlign = 'center';
-            ctx.fillText('$', item.x + item.width / 2, item.y + item.height / 2 + 5);
-        }
-
-        function drawJaggedObstacle(item) {
-            // Brown/Orange COGS (spikes)
-            ctx.fillStyle = item.color;
-            ctx.beginPath();
-            ctx.moveTo(item.x, item.y + item.height);
-            ctx.lineTo(item.x + item.width, item.y + item.height);
-            ctx.lineTo(item.x + item.width * 0.75, item.y);
-            ctx.lineTo(item.x + item.width * 0.5, item.y + item.height * 0.5);
-            ctx.lineTo(item.x + item.width * 0.25, item.y);
-            ctx.closePath();
-            ctx.fill();
-        }
-
-        function drawFlyingArrow(item) {
-            // Red Operating Expense (Downward Arrow)
-            ctx.fillStyle = item.color;
-            ctx.beginPath();
-            // Arrow body
-            ctx.fillRect(item.x + item.width * 0.3, item.y, item.width * 0.4, item.height);
-            // Arrowhead (triangle)
-            ctx.moveTo(item.x, item.y);
-            ctx.lineTo(item.x + item.width, item.y);
-            ctx.lineTo(item.x + item.width / 2, item.y + item.height * 1.5);
-            ctx.closePath();
-            ctx.fill();
-        }
-
-        function drawMajorLossX(item) {
-            // Major Loss (Red X)
-            ctx.strokeStyle = item.color;
-            ctx.lineWidth = 10;
-            
-            ctx.beginPath();
-            ctx.moveTo(item.x, item.y);
-            ctx.lineTo(item.x + item.width, item.y + item.height);
-            ctx.stroke();
-            
-            ctx.beginPath();
-            ctx.moveTo(item.x + item.width, item.y);
-            ctx.lineTo(item.x, item.y + item.height);
-            ctx.stroke();
-        }
-
-        function drawPlayer() {
-            // Use the custom drawing function
-            drawBusinessIcon(player.x, player.y, player.width, player.height);
-        }
-
-        function drawGround() {
-            // Ground layer (Darker blue/gray for accounting books)
-            ctx.fillStyle = '#374151';
-            ctx.fillRect(0, GROUND_Y, canvas.width, canvas.height - GROUND_Y);
-
-            // Ground line (The "path")
-            ctx.strokeStyle = '#546b88'; 
-            ctx.lineWidth = 5;
-            ctx.beginPath();
-            ctx.moveTo(0, GROUND_Y);
-            ctx.lineTo(canvas.width, GROUND_Y);
-            ctx.stroke();
-
-            // Label the ground as "Financial Path"
-            ctx.fillStyle = '#f9fafb'; // White text
-            ctx.font = '16px Inter';
-            ctx.textAlign = 'left';
-            ctx.fillText('THE FINANCIAL PATH', 10, GROUND_Y - 15);
-        }
-
-        function drawItems() {
-            items.forEach(item => {
-                // Use the item's specific draw function
-                item.draw(item);
-                
-                // Draw Label/Value above the item
-                ctx.fillStyle = item.isCollectible ? '#059669' : '#b91c1c'; // Green for revenue, Red for expenses
-                ctx.font = '10px Inter';
-                ctx.textAlign = 'center';
-                const displayText = item.value > 0 ? `+${item.value}` : `${item.value}`;
-                ctx.fillText(item.label, item.x + item.width / 2, item.y - 15);
-                ctx.fillText(displayText, item.x + item.width / 2, item.y - 5);
-            });
+        function showScreen(id) {
+            document.getElementById('start-screen').classList.add('hidden');
+            document.getElementById('game-screen').classList.add('hidden');
+            document.getElementById('results-screen').classList.add('hidden');
+            document.getElementById('review-screen').classList.add('hidden');
+            document.getElementById(id).classList.remove('hidden');
         }
 
         function updateScoreboard() {
-            playerNameDisplay.textContent = `Player: ${gameState.playerName}`;
-            netIncomeDisplay.textContent = `Net Income: $${gameState.netIncome.toLocaleString()}`;
-            strikesDisplay.textContent = `Losses: ${gameState.strikes} / ${gameState.maxStrikes}`;
-
-            // Conditional coloring for Net Income
-            if (gameState.netIncome >= 1000) {
-                netIncomeDisplay.className = 'text-xl font-bold text-green-400';
-            } else if (gameState.netIncome < 0) {
-                netIncomeDisplay.className = 'text-xl font-bold text-red-500';
-            } else {
-                netIncomeDisplay.className = 'text-xl font-bold text-yellow-400';
-            }
+            document.getElementById('display-student-name').textContent = studentName;
+            document.getElementById('current-q-num').textContent = currentQuestionIndex + 1;
+            document.getElementById('total-q-count').textContent = QUESTION_COUNT;
+            document.getElementById('score').textContent = score;
+            renderNavigationTable('game');
         }
 
-        // --- GAME MECHANICS ---
+        // --- Navigation Table Functions ---
+        function renderNavigationTable(mode) {
+            const navElement = mode === 'game' ? questionNav : reviewNav;
+            const currentIndex = mode === 'game' ? currentQuestionIndex : reviewQuestionIndex;
+            navElement.innerHTML = '';
 
-        function spawnItem() {
-            const template = itemTemplates[Math.floor(Math.random() * itemTemplates.length)];
-            const newItem = {
-                ...template,
-                x: canvas.width,
-                y: template.y, 
-                width: template.width,
-                height: template.height,
-                collected: false
-            };
-            items.push(newItem);
-        }
-
-        function checkCollision(item) {
-            // Simplified AABB collision detection, using player's current dynamic height
-            if (
-                player.x < item.x + item.width &&
-                player.x + player.width > item.x &&
-                player.y < item.y + item.height &&
-                player.y + player.height > item.y
-            ) {
-                return true;
-            }
-            return false;
-        }
-
-        function handleItemEffect(item) {
-            item.collected = true;
-            gameState.netIncome += item.value;
-
-            // Visual feedback
-            const feedbackText = item.value > 0 ? `+${item.value}` : `${item.value}`;
-            console.log(`${item.label}: ${feedbackText}`);
-
-            if (item.strike) {
-                gameState.strikes++;
-                canvas.style.backgroundColor = '#fef2f2'; // Very light red flash
-                setTimeout(() => canvas.style.backgroundColor = '#ffffff', 100);
-            } else if (item.value > 0) {
-                 canvas.style.backgroundColor = '#ecfdf5'; // Very light green flash
-                setTimeout(() => canvas.style.backgroundColor = '#ffffff', 50);
-            }
-        }
-
-        function updatePlayer() {
-            // Apply gravity/jump
-            if (player.isJumping) {
-                player.yVelocity += player.gravity;
-                player.y += player.yVelocity;
-            }
-
-            // Stop jumping when player hits the ground
-            if (player.y >= GROUND_Y - player.height) {
-                player.isJumping = false;
-                player.yVelocity = 0;
-                player.y = GROUND_Y - player.height;
-            }
-
-            // Handle ducking dimensions (Adjust y position immediately when ducking/unducking)
-            const newHeight = player.isDucking ? player.duckHeight : player.initialHeight;
-            if (newHeight !== player.height) {
-                // Adjust Y to keep the player on the ground when ducking/standing
-                player.y += (player.height - newHeight);
-                player.height = newHeight;
-            }
-            // Ensure player remains on the ground if not jumping
-            if (!player.isJumping) {
-                player.y = GROUND_Y - player.height;
-            }
-        }
-
-        function updateItems(deltaTime) {
-            // Spawn new item
-            gameState.timeSinceLastItem += deltaTime;
-            if (gameState.timeSinceLastItem > gameState.itemSpawnRate) {
-                spawnItem();
-                // Speed up spawn rate based on game speed
-                gameState.itemSpawnRate = Math.random() * 700 + 700 - (gameState.gameSpeed * 10);
-                gameState.timeSinceLastItem = 0;
-            }
-            
-            // Move and check items
-            for (let i = items.length - 1; i >= 0; i--) {
-                const item = items[i];
-                item.x -= gameState.gameSpeed;
-
-                if (!item.collected && checkCollision(item)) {
-                    handleItemEffect(item);
+            for (let i = 0; i < QUESTION_COUNT; i++) {
+                const answerState = studentAnswers[i];
+                const btn = document.createElement('button');
+                btn.className = 'nav-btn';
+                btn.textContent = i + 1;
+                
+                if (mode === 'game') {
+                    btn.onclick = () => { currentQuestionIndex = i; loadQuestion(); };
+                } else {
+                    btn.onclick = () => { reviewQuestionIndex = i; loadReviewQuestion(); };
                 }
 
-                // Remove items that go off screen or have been collected
-                if (item.x + item.width < 0 || item.collected) {
-                    items.splice(i, 1);
+                // Apply status class
+                if (i === currentIndex) {
+                    btn.classList.add('nav-current');
+                } else if (answerState.hintUsed) {
+                    btn.classList.add('nav-hinted');
+                } else if (answerState.isAnswered) {
+                    btn.classList.add(answerState.isCorrect ? 'nav-correct' : 'nav-incorrect');
+                } else {
+                    btn.classList.add('nav-unanswered');
                 }
+                
+                navElement.appendChild(btn);
             }
         }
 
-        // --- INPUTS & CONTROLS ---
 
-        function jump() {
-            if (!player.isJumping && gameState.isRunning) {
-                player.isJumping = true;
-                player.yVelocity = player.jumpStrength;
-                player.isDucking = false;
+        // --- Game Flow Functions ---
+        function startQuiz() {
+            studentName = document.getElementById('student-name').value.trim();
+            if (studentName === "") {
+                alert("Please enter your name to start the quiz.");
+                return;
             }
-        }
-        
-        function duck() {
-            if (gameState.isRunning && !player.isJumping) {
-                player.isDucking = true;
-            }
-        }
-        
-        function unduck() {
-            player.isDucking = false;
-        }
 
-        document.addEventListener('keydown', (e) => {
-            if (e.code === 'Space' || e.code === 'ArrowUp') {
-                e.preventDefault();
-                jump();
-            } else if (e.code === 'ArrowDown') {
-                e.preventDefault();
-                duck();
-            }
-        });
-        
-        document.addEventListener('keyup', (e) => {
-            if (e.code === 'ArrowDown') {
-                e.preventDefault();
-                unduck();
-            }
-        });
-
-        // Touch controls
-        canvas.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            const touchY = e.touches[0].clientY;
-            const canvasRect = canvas.getBoundingClientRect();
+            shuffle(ALL_TRANSACTIONS);
+            selectedQuestions = ALL_TRANSACTIONS.slice(0, QUESTION_COUNT);
             
-            // Touch top half to jump, bottom half to duck
-            if (touchY < canvasRect.top + canvasRect.height / 2) {
-                jump();
-            } else {
-                duck();
-            }
-        });
-        
-        canvas.addEventListener('touchend', (e) => {
-            e.preventDefault();
-            unduck();
-        });
+            studentAnswers = Array(QUESTION_COUNT).fill(null).map((_, i) => ({
+                qIndex: i,
+                studentCat: null,
+                isCorrect: false,
+                isAnswered: false, 
+                hintUsed: false     
+            }));
 
-
-        // --- GAME FLOW CONTROL ---
-
-        function showOverlay(title, contentHTML, buttonText, buttonAction) {
-            messageBox.innerHTML = `
-                <h2 class="text-3xl font-black text-gray-800 mb-4">${title}</h2>
-                <div class="text-gray-600 mb-6">${contentHTML}</div>
-                <button id="overlayButton" class="btn-game bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 px-8 rounded-lg shadow-lg">
-                    ${buttonText}
-                </button>
-            `;
-            document.getElementById('overlayButton').addEventListener('click', buttonAction);
-            gameOverlay.style.opacity = 1;
-            gameOverlay.style.pointerEvents = 'auto';
+            currentQuestionIndex = 0;
+            score = 0;
+            showScreen('game-screen');
+            loadQuestion();
         }
-        
-        function showNameInput() {
-            showOverlay(
-                'Welcome, CEO!',
-                `
-                    <p class="mb-4">Please enter your name to start your new business quarter on **The Profit Path**.</p>
-                    <input type="text" id="nameInput" placeholder="Your Name" value="${gameState.playerName}" 
-                           class="w-full p-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-teal-500 text-center font-bold text-gray-800">
-                `,
-                'Continue to Rules',
-                () => {
-                    const name = document.getElementById('nameInput').value.trim();
-                    if (name) {
-                        gameState.playerName = name.substring(0, 15); // Limit name length
-                        showRules();
-                    } else {
-                        alert("Please enter a name to start!");
-                    }
+
+        function toggleCategoryButtons(disabled) {
+            categoryButtons.forEach(btn => btn.disabled = disabled);
+        }
+
+        function loadQuestion() {
+            const q = selectedQuestions[currentQuestionIndex];
+            const answerState = studentAnswers[currentQuestionIndex];
+
+            // Update the question card
+            questionCard.textContent = `${currentQuestionIndex + 1}. ${q.desc}`;
+            
+            // Hide hint display and enable/disable hint button
+            hintDisplay.classList.add('hidden');
+            questionHintBtn.disabled = answerState.isAnswered || answerState.hintUsed;
+            questionHintBtn.style.opacity = answerState.isAnswered || answerState.hintUsed ? '0.5' : '1';
+            
+            // Remove feedback classes
+            questionCard.classList.remove('correct-feedback', 'incorrect-feedback');
+            
+            // Handle Lockout Logic
+            const isLocked = answerState.isAnswered || answerState.hintUsed;
+            toggleCategoryButtons(isLocked);
+
+            // Visually indicate the selected answer (if one exists)
+            categoryButtons.forEach(btn => {
+                btn.style.opacity = '1';
+                if (answerState.studentCat && btn.textContent.includes(answerState.studentCat)) {
+                    btn.style.opacity = '0.5'; 
                 }
-            );
-        }
+            });
 
-        function showRules() {
-            const rulesHTML = `
-                <div class="text-left space-y-3 font-semibold text-gray-700">
-                    <p class="text-xl text-teal-600 font-extrabold">The Rules of Profit:</p>
-                    <ul class="list-disc list-inside space-y-2 pl-4">
-                        <li>💰 **Revenue (Gold Coins):** **Jump** to collect. Increases Net Income.</li>
-                        <li>🧱 **COGS (Brown Spikes):** **Jump** to avoid. Hitting them reduces Net Income.</li>
-                        <li>📉 **Operating Expenses (Red Arrows):** **Duck** to avoid. Hitting them heavily reduces Net Income.</li>
-                        <li>❌ **Major Losses:** Hitting one gives you **1 Strike** and a huge penalty.</li>
-                    </ul>
-                    <p class="text-base text-red-600 font-bold">Game Over if you get 3 Major Loss Strikes or Net Income drops below -$2000.</p>
-                </div>
-            `;
-            showOverlay(
-                'Quarterly Objectives',
-                rulesHTML,
-                'Start Quarter',
-                startGame
-            );
-        }
-        
-        function showGameOver() {
-            const finalScoreClass = gameState.netIncome >= 0 ? 'text-green-600' : 'text-red-600';
-            const reason = gameState.strikes >= gameState.maxStrikes 
-                ? 'Reason: Too many Major Loss Strikes!' 
-                : 'Reason: Net Income fell below the limit!';
-            
-            const scoreboardHTML = `
-                <div class="p-4 rounded-lg bg-gray-100 border border-gray-300">
-                    <p class="text-xl font-bold text-gray-800">${gameState.playerName}'s Final Results:</p>
-                    <h3 class="text-5xl font-extrabold ${finalScoreClass} my-4">$${gameState.netIncome.toLocaleString()}</h3>
-                    <p class="text-base text-gray-600">${reason}</p>
-                    <p class="text-sm text-red-500 mt-2">Total Major Losses: ${gameState.strikes}</p>
-                </div>
-            `;
+            // If question is already answered/hinted, show the explanation
+            if (answerState.isAnswered) {
+                const penaltyText = answerState.hintUsed ? `(Penalty Applied: ${POINTS_HINT_PENALTY} Pts)` : 
+                                  (!answerState.isCorrect ? `(Penalty Applied: ${POINTS_INCORRECT} Pts)` : `(+${POINTS_CORRECT} Pts)`);
+                
+                hintDisplay.innerHTML = `<strong>${answerState.isCorrect ? '✅ Correct' : '❌ Incorrect'} ${penaltyText}</strong> | 
+                                         <p><strong>Correct Category:</strong> ${q.cat}</p>
+                                         <p><strong>Explanation:</strong> ${q.exp}</p>`;
+                hintDisplay.classList.remove('hidden');
+            }
 
-            showOverlay(
-                'Quarter Ended!',
-                scoreboardHTML,
-                'Restart Business',
-                startGame
-            );
-        }
-
-        function gameOver() {
-            gameState.isRunning = false;
-            cancelAnimationFrame(gameState.animationFrameId);
-            showGameOver();
-        }
-
-        function resetGame() {
-            gameState.netIncome = 0;
-            gameState.strikes = 0;
-            gameState.gameSpeed = 6;
-            gameState.lastTime = 0;
-            gameState.timeSinceLastItem = 0;
-            items.length = 0;
-            
-            player.isJumping = false;
-            player.isDucking = false;
-            player.y = GROUND_Y - player.height;
-            player.yVelocity = 0;
-            canvas.style.backgroundColor = '#ffffff';
-            
             updateScoreboard();
         }
-        
-        function startGame() {
-            resetGame();
-            gameState.isRunning = true;
-            gameOverlay.style.opacity = 0;
-            gameOverlay.style.pointerEvents = 'none';
-            gameState.animationFrameId = requestAnimationFrame(gameLoop);
+
+        function useQuestionHint() {
+            let answerState = studentAnswers[currentQuestionIndex];
+            
+            if (answerState.isAnswered || answerState.hintUsed) return;
+
+            const q = selectedQuestions[currentQuestionIndex];
+
+            // 1. Apply Penalty
+            score += POINTS_HINT_PENALTY;
+
+            // 2. Lock the Question and Hint button
+            answerState.hintUsed = true;
+            answerState.isAnswered = true; 
+            toggleCategoryButtons(true);
+            questionHintBtn.disabled = true;
+
+            // 3. Display Hint and lock for review
+            hintDisplay.innerHTML = `<strong>Hint Used (Penalty Applied: ${POINTS_HINT_PENALTY} Pts)</strong> | 
+                                     <p><strong>Explanation:</strong> ${q.exp}</p>`;
+            hintDisplay.classList.remove('hidden');
+
+            updateScoreboard();
         }
 
-        // --- MAIN GAME LOOP ---
-
-        function gameLoop(currentTime) {
-            if (!gameState.isRunning) return;
-
-            const deltaTime = currentTime - gameState.lastTime;
-            gameState.lastTime = currentTime;
-
-            // 1. Clear Canvas
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            drawGround(); // Draw background elements first
+        function submitAnswer(category) {
+            const q = selectedQuestions[currentQuestionIndex];
+            const isCorrect = category === q.cat;
             
-            // 2. Update Game State
-            updatePlayer();
-            updateItems(deltaTime);
-            updateScoreboard();
-            
-            // Increase speed and difficulty gradually
-            gameState.gameSpeed += 0.0005;
+            let answerState = studentAnswers[currentQuestionIndex];
 
-            // 3. Check for Game Over Conditions
-            if (gameState.strikes >= gameState.maxStrikes || gameState.netIncome < -2000) {
-                return gameOver();
+            if (answerState.isAnswered) return;
+
+            // --- 1. Score Calculation ---
+            if (isCorrect) {
+                score += POINTS_CORRECT; 
+            } else {
+                score += POINTS_INCORRECT; // -1 point penalty
             }
 
-            // 4. Draw Elements (Items above ground, Player on top)
-            drawItems();
-            drawPlayer();
+            // --- 2. Lockout and State Update ---
+            answerState.studentCat = category;
+            answerState.isCorrect = isCorrect;
+            answerState.isAnswered = true; 
+            toggleCategoryButtons(true); 
 
-            // 5. Request next frame
-            gameState.animationFrameId = requestAnimationFrame(gameLoop);
+            // --- 3. Apply Animation Feedback & Show Explanation ---
+            questionCard.classList.remove('correct-feedback', 'incorrect-feedback'); 
+            if (isCorrect) {
+                questionCard.classList.add('correct-feedback');
+            } else {
+                questionCard.classList.add('incorrect-feedback');
+            }
+
+            const penaltyText = isCorrect ? `(+${POINTS_CORRECT} Pts)` : `(Penalty Applied: ${POINTS_INCORRECT} Pts)`;
+
+            hintDisplay.innerHTML = `<strong>${isCorrect ? '✅ Correct' : '❌ Incorrect'} ${penaltyText}</strong> | 
+                                     <p><strong>Correct Category:</strong> ${q.cat}</p>
+                                     <p><strong>Explanation:</strong> ${q.exp}</p>`;
+            hintDisplay.classList.remove('hidden');
+
+            // Move to the next question after a brief delay
+            setTimeout(() => {
+                let nextIndex = currentQuestionIndex + 1;
+                while (nextIndex < QUESTION_COUNT && studentAnswers[nextIndex].isAnswered) {
+                    nextIndex++;
+                }
+
+                if (nextIndex < QUESTION_COUNT) {
+                    currentQuestionIndex = nextIndex;
+                    loadQuestion();
+                } else {
+                    // Check if all answered, or just update UI for the last question
+                    loadQuestion(); 
+                }
+            }, 1000); 
         }
 
-        // --- INITIALIZATION ---
+        // --- Results and Review Functions ---
 
-        window.onload = function() {
-            const updateCanvasSize = () => {
-                const container = document.querySelector('.w-full.max-w-4xl');
-                if (container) {
-                    canvas.width = container.clientWidth;
-                    canvas.height = Math.min(400, container.clientWidth * 0.5); 
-                    
-                    // Update GROUND_Y (let variable)
-                    GROUND_Y = canvas.height - 50;
-                    
-                    // Update player position and item template Y positions relative to the new ground
-                    player.y = GROUND_Y - player.height;
+        function showResults() {
+            let correctCount = studentAnswers.filter(a => a.isCorrect).length;
+            let incorrectCount = studentAnswers.filter(a => a.isAnswered && !a.isCorrect && !a.hintUsed).length;
+            let hintedCount = studentAnswers.filter(a => a.hintUsed).length;
+            let finalScore = score;
+            
+            document.getElementById('results-student-name').textContent = studentName;
+            document.getElementById('final-score').textContent = finalScore;
+            document.getElementById('correct-count').textContent = correctCount;
+            document.getElementById('incorrect-count').textContent = incorrectCount;
+            document.getElementById('hinted-count').textContent = hintedCount;
 
-                    // This is crucial: Recalculate item positions relative to the new GROUND_Y
-                    itemTemplates.forEach(template => {
-                        // The original vertical offset from the bottom of the canvas was 400 - original_y
-                        // We need to re-anchor based on GROUND_Y (which is 50px from the bottom)
-                        // A better way is to define item height based on offset from GROUND_Y
-                        
-                        // Example: Old item was at y=270 on a 400px canvas (400-270 = 130px above bottom)
-                        // New item y = GROUND_Y - (400 - original_y_fixed)
-                        // Since I used GROUND_Y in the template definition, I just need to update it:
-                        // NOTE: Since the templates are CONST, they need to be updated dynamically or recalculated.
-                        // For simplicity in a single file, I'll rely on the player logic updating relative to GROUND_Y.
-                        // I will update the Y position of current live items to prevent layout shift on resize.
-                    });
+            showScreen('results-screen');
+        }
 
-                    // Update overlay position
-                    gameOverlay.style.top = canvas.offsetTop + 'px';
-                    gameOverlay.style.left = canvas.offsetLeft + 'px';
-                    gameOverlay.style.width = canvas.offsetWidth + 'px';
-                    gameOverlay.style.height = canvas.offsetHeight + 'px';
+        function startReviewScreen() {
+            reviewQuestionIndex = 0;
+            showScreen('review-screen');
+            loadReviewQuestion();
+        }
+
+        function loadReviewQuestion() {
+            const answerState = studentAnswers[reviewQuestionIndex];
+            const q = selectedQuestions[reviewQuestionIndex];
+            
+            const reviewStatusElement = document.getElementById('review-status');
+            const statusClasses = ['status-correct', 'status-incorrect', 'status-hinted', 'status-unanswered'];
+            
+            // Determine Status and Points
+            let statusText = '🚫 Unanswered';
+            let statusClass = 'status-unanswered';
+            let points = '0 Pts';
+
+            if (answerState.hintUsed) {
+                statusText = '⚠️ Hint Used';
+                statusClass = 'status-hinted';
+                points = `${POINTS_HINT_PENALTY} Pts`;
+            } else if (answerState.isAnswered) {
+                if (answerState.isCorrect) {
+                    statusText = '✅ Correct';
+                    statusClass = 'status-correct';
+                    points = `+${POINTS_CORRECT} Pts`;
+                } else {
+                    statusText = '❌ Incorrect';
+                    statusClass = 'status-incorrect';
+                    points = `${POINTS_INCORRECT} Pts`;
                 }
-            };
+            }
+            
+            // Update Review Card
+            document.getElementById('review-q-title').textContent = `Q${reviewQuestionIndex + 1}: ${q.desc}`;
+            
+            reviewStatusElement.textContent = `Status: ${statusText} (${points})`;
+            reviewStatusElement.classList.remove(...statusClasses);
+            reviewStatusElement.classList.add(statusClass);
 
-            // Set up event listeners
-            updateCanvasSize();
-            window.addEventListener('resize', updateCanvasSize);
+            document.getElementById('review-your-answer').textContent = answerState.studentCat || 'N/A';
+            document.getElementById('review-correct-answer').textContent = q.cat;
+            document.getElementById('review-explanation').textContent = q.exp;
 
-            // Start the game flow with name input
-            showNameInput();
-            drawGround(); 
-            drawPlayer(); 
-        };
+            // Update Review Navigation
+            renderNavigationTable('review');
+        }
+
+        // --- Modal Functions (Definitions) ---
+        function showDefinitionModal() {
+            document.getElementById('help-modal').classList.remove('hidden');
+        }
+
+        function closeHelpModal(event) {
+            if (event.target.classList.contains('modal') || event.target.classList.contains('close-btn')) {
+                document.getElementById('help-modal').classList.add('hidden');
+            }
+        }
+
+        // Initialize with the start screen
+        document.addEventListener('DOMContentLoaded', () => {
+            showScreen('start-screen');
+        });
     </script>
 </body>
 </html>
