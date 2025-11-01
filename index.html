@@ -3,766 +3,176 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cash Flow Detective Quiz (Final Challenge)</title>
+    <title>IELTS Writing Task 2 - Band 9.0 Mastery Course Blueprint</title>
     <style>
-        /* --- Root and Body Styles --- */
-        :root {
-            --color-operating: #4CAF50; /* Green */
-            --color-investing: #FF9800; /* Orange */
-            --color-financing: #2196F3; /* Blue */
-            --color-primary: #19488a;
-            --color-background: #f4f7f9;
-            --color-text: #333;
-            --color-card-bg: #fff;
-            --color-success: #28a745;
-            --color-error: #dc3545;
-            --color-warning: #ffc107;
-            --color-light-gray: #f0f0f0;
-        }
-
+        /* BASE STYLES */
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
             margin: 0;
             padding: 20px;
-            background-color: var(--color-background);
-            color: var(--color-text);
-            text-align: center;
+            color: #2c3e50;
+            background-color: #f4f7f6;
         }
-
         .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: var(--color-card-bg);
-            padding: 30px;
+            max-width: 1100px;
+            margin: auto;
+            background: #ffffff;
+            padding: 30px 40px;
             border-radius: 12px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            transition: box-shadow 0.5s;
+        }
+        
+        /* KEYFRAMES */
+        @keyframes shadow-pulse {
+            0% { box-shadow: 0 0 0 0 rgba(26, 188, 156, 0.4); }
+            100% { box-shadow: 0 0 0 10px rgba(26, 188, 156, 0); }
+        }
+        @keyframes gold-shift {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+        @keyframes color-fade {
+            0% { filter: hue-rotate(0deg); }
+            100% { filter: hue-rotate(360deg); }
         }
 
+        /* TYPOGRAPHY & HEADINGS */
         h1 {
-            color: var(--color-primary);
-            margin-bottom: 20px;
+            color: #c0392b;
+            text-align: center;
+            border-bottom: 5px solid #3498db;
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+            font-size: 2.4em;
+            text-transform: uppercase;
+            transition: all 0.5s;
         }
-
-        /* --- Global Component Styles --- */
-        .hidden { display: none !important; }
-
-        button, input[type="button"] {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background-color 0.3s, transform 0.1s;
-            margin: 5px;
+        h1:hover {
+            filter: drop-shadow(0 0 5px #3498db);
+            animation: color-fade 5s linear infinite;
         }
-
-        button:hover:not(:disabled) { transform: translateY(-1px); }
-
-        /* Disable state for all buttons */
-        button:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none !important;
+        h2 {
+            color: #2980b9;
+            margin-top: 40px;
+            padding: 10px 0;
+            border-bottom: 3px solid #f1c40f;
+            font-size: 1.8em;
         }
-
-        .btn-primary {
-            background-color: var(--color-primary);
-            color: white;
-        }
-
-        .btn-secondary {
-            background-color: #6c757d;
-            color: white;
-        }
-        
-        /* --- Game Screen --- */
-        #game-screen {
-            text-align: left;
-        }
-
-        .scoreboard {
-            display: flex;
-            justify-content: space-between;
-            background-color: #e6f0ff;
-            padding: 10px 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            font-size: 1.1em;
-            color: var(--color-primary);
-            font-weight: bold;
-        }
-        
-        /* --- Question Area --- */
-        #question-area {
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-
-        #question-card {
-            flex-grow: 1;
-            border: 2px solid var(--color-primary);
-            padding: 25px;
-            border-radius: 8px;
-            font-size: 1.5em;
-            min-height: 80px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s ease-out; 
-            background-color: var(--color-card-bg);
-        }
-
-        /* --- Hint & Category Styles --- */
-        #hint-display {
-            background-color: #fffbe6;
-            border: 1px solid #ffcc00;
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            font-size: 1em;
-            color: #666;
-            text-align: left;
-        }
-        
-        .category-group {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-            flex-grow: 1;
-        }
-
-        .category-btn {
-            padding: 15px 10px;
-            color: white;
-            font-weight: bold;
-            font-size: 1.1em;
-            width: 100%;
-            margin: 0;
-        }
-        
-        .action-buttons {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        #btn-operating { background-color: var(--color-operating); }
-        #btn-investing { background-color: var(--color-investing); }
-        #btn-financing { background-color: var(--color-financing); }
-
-        .help-btn {
-            background-color: #6c757d;
-            color: white;
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            font-size: 1.2em;
-            padding: 0;
-            margin: 0;
-            flex-shrink: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        /* --- Navigation Table Styles (General) --- */
-        #question-nav, #review-nav {
-            margin-top: 20px;
-            padding: 15px;
-            border-top: 1px solid #ddd;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            justify-content: center;
-        }
-
-        .nav-btn {
-            width: 35px;
-            height: 35px;
-            padding: 0;
-            font-size: 0.9em;
-            border-radius: 50%;
-            border: 2px solid var(--color-primary);
-            background-color: white;
-            color: var(--color-primary);
-            transition: background-color 0.2s, color 0.2s;
-        }
-
-        /* Navigation Button States */
-        .nav-current {
-            background-color: var(--color-primary);
-            color: white;
-        }
-        .nav-correct {
-            background-color: var(--color-success);
-            color: white;
-            border-color: var(--color-success);
-        }
-        .nav-incorrect {
-            background-color: var(--color-error);
-            color: white;
-            border-color: var(--color-error);
-        }
-        .nav-hinted {
-            background-color: var(--color-warning);
-            color: var(--color-text);
-            border-color: var(--color-warning);
-        }
-        .nav-unanswered {
-            background-color: var(--color-light-gray);
-            color: var(--color-text);
-            border-color: var(--color-light-gray);
-        }
-
-        /* --- Finish Button in Game Screen --- */
-        #finish-quiz-btn {
-            background-color: var(--color-error);
-            color: white;
-            font-size: 1.2em;
-            padding: 12px 25px;
-            margin-top: 15px;
-        }
-
-        /* --- Review Screen Improvements --- */
-        #review-display {
-            border: 2px solid var(--color-primary);
-            padding: 20px;
-            border-radius: 8px;
-            text-align: left;
-            margin-bottom: 20px;
-        }
-
-        #review-status {
+        h3 {
+            color: #1abc9c;
+            margin-top: 25px;
             font-size: 1.3em;
-            font-weight: bold;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #eee;
-            margin-bottom: 10px;
         }
-        .status-correct { color: var(--color-success); }
-        .status-incorrect { color: var(--color-error); }
-        .status-hinted { color: var(--color-warning); }
-        .status-unanswered { color: #6c757d; }
-
-        .review-details p {
-            margin: 5px 0;
-            line-height: 1.4;
+        
+        /* ASSESSMENT CARD & NAVIGATION */
+        .prize-card {
+            background: linear-gradient(135deg, #fcf8e3 0%, #fff0b3 50%, #fcf8e3 100%);
+            background-size: 200% 200%;
+            border: 2px solid #f39c12;
+            padding: 25px;
+            margin: 30px 0;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            animation: gold-shift 4s ease-in-out infinite alternate;
         }
-
-        /* --- Modal Styles (Definitions) --- */
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.6);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
+        .prize-card ul {
+            list-style: none;
+            padding-left: 0;
         }
-
-        .modal-content {
-            background: var(--color-card-bg);
-            padding: 30px;
-            border-radius: 10px;
-            max-width: 600px;
-            width: 90%;
-            text-align: left;
-            position: relative;
+        .prize-card ul li:before {
+            content: "?"; /* Changed from emoji to standard checkmark character */
+            margin-right: 10px;
+            color: #f39c12;
         }
-
-        .modal-section {
-            padding: 8px;
-            margin-bottom: 10px;
+        .nav-link {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 10px 20px;
+            background-color: #1abc9c;
+            color: white;
+            text-decoration: none;
             border-radius: 5px;
-        }
-        .cfo { border-left: 5px solid var(--color-operating); background-color: #e8f5e9; }
-        .cfi { border-left: 5px solid var(--color-investing); background-color: #fff3e0; }
-        .cff { border-left: 5px solid var(--color-financing); background-color: #e3f2fd; }
-
-        .close-btn {
-            position: absolute;
-            top: 10px;
-            right: 15px;
-            font-size: 28px;
             font-weight: bold;
-            color: #aaa;
-            cursor: pointer;
-            line-height: 28px;
+            transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s;
+        }
+        .nav-link:hover {
+            background-color: #16a085;
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 4px 10px rgba(26, 188, 156, 0.4);
+        }
+
+        /* LESSON PLAN LIST */
+        .lesson-list {
+            list-style: none;
+            padding: 0;
+        }
+        .lesson-list li {
+            background-color: #e8f8f5;
+            border: 1px solid #1abc9c;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            padding: 15px;
+            transition: background-color 0.3s, box-shadow 0.3s, transform 0.3s;
+        }
+        .lesson-list li:hover {
+            background-color: #d1f2eb;
+            box-shadow: 0 4px 15px rgba(26, 188, 156, 0.2);
+            animation: shadow-pulse 1.5s infinite alternate;
+            transform: scale(1.01);
+        }
+        .lesson-list a {
+            color: #2980b9;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1em;
+            display: block;
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h1>💰 Cash Flow Detective 🕵️</h1>
-        <p style="font-size: 0.9em; color: var(--color-error); font-weight: bold;">
-            ⚠️ Rules: Correct Answer = +2 Pts. | Wrong Answer = -1 Pt. | Question Hint = -2 Pts. (and locks question!)
-        </p>
+        <h1>IELTS Writing Task 2 - Band 9.0 Mastery Course Blueprint</h1>
 
-        <div id="start-screen">
-            <h2>Welcome! Enter your name to begin.</h2>
-            <input type="text" id="student-name" placeholder="Your Name" required>
-            <button class="btn-primary" onclick="startQuiz()">Next</button>
-        </div>
+        <h2>Course Mission: Band 6.0 to 9.0 in 10 Lessons!</h2>
+        <hr>
 
-        <div id="game-screen" class="hidden">
-            <div class="scoreboard">
-                <span>Student: <span id="display-student-name"></span></span>
-                <span>Question <span id="current-q-num">1</span> of <span id="total-q-count">20</span></span>
-                <span>Score: <span id="score">0</span> Points</span>
-            </div>
-            
-            <div id="question-area">
-                <div id="question-card">Transaction description will appear here.</div>
-                <button id="question-hint-btn" class="help-btn" style="background-color: var(--color-warning);" onclick="useQuestionHint()">?</button>
-            </div>
-
-            <div id="hint-display" class="hidden"></div>
-
-            <p style="font-size: 1.2em; font-weight: bold; margin-bottom: 10px;">Which activity is this?</p>
-            <div class="action-buttons">
-                <div class="category-group">
-                    <button id="btn-operating" class="category-btn" onclick="submitAnswer('Operating')">Operating (CFO)</button>
-                    <button class="help-btn" onclick="showDefinitionModal()">?</button>
-                </div>
-                <div class="category-group">
-                    <button id="btn-investing" class="category-btn" onclick="submitAnswer('Investing')">Investing (CFI)</button>
-                    <button class="help-btn" onclick="showDefinitionModal()">?</button>
-                </div>
-                <div class="category-group">
-                    <button id="btn-financing" class="category-btn" onclick="submitAnswer('Financing')">Financing (CFF)</button>
-                    <button class="help-btn" onclick="showDefinitionModal()">?</button>
-                </div>
-            </div>
-
-            <button id="finish-quiz-btn" onclick="showResults()">Finish Quiz & View Results</button>
-
-            <div id="question-nav">
-                </div>
-        </div>
-
-        <div id="results-screen" class="hidden">
-            <h2>Quiz Results for <span id="results-student-name"></span></h2>
-            <p style="font-size: 1.5em;">Final Score: <strong id="final-score">0</strong> Points</p>
-            <p style="font-size: 1.2em; color: var(--color-success);">Correct: <span id="correct-count">0</span> | Incorrect: <span id="incorrect-count">0</span> | Hinted: <span id="hinted-count">0</span></p>
-            
-            <button class="btn-primary" onclick="startReviewScreen()">Review Quiz</button>
-            <button class="btn-secondary" onclick="window.location.reload()">Start New Quiz</button>
-        </div>
-
-        <div id="review-screen" class="hidden">
-            <h2>Detailed Review</h2>
-            
-            <div id="review-display">
-                <h3 id="review-q-title">Q1: Transaction</h3>
-                <div id="review-status" class="status-unanswered">Status: Unanswered (0 Pts)</div>
-                <div class="review-details">
-                    <p><strong>Your Answer:</strong> <span id="review-your-answer">N/A</span></p>
-                    <p><strong>Correct Answer:</strong> <span id="review-correct-answer">N/A</span></p>
-                    <p><strong>Explanation:</strong> <span id="review-explanation">N/A</span></p>
-                </div>
-            </div>
-
-            <div id="review-nav">
-                </div>
-
-            <button class="btn-primary" onclick="showResults()">Back to Summary</button>
-        </div>
-
-    </div>
-
-    <div id="help-modal" class="modal hidden" onclick="closeHelpModal(event)">
-        <div class="modal-content">
-            <span class="close-btn" onclick="closeHelpModal(event)">&times;</span>
-            <h3>Cash Flow Statement Activity Definitions</h3>
-
-            <div class="modal-section cfo">
-                <h4>Operating Activities (CFO)</h4>
-                <p>Cash flows related to the **normal day-to-day business operations** of the company, including primary revenue and expense items. This includes cash from selling goods/services, and cash paid for inventory, wages, utilities, interest, and taxes.</p>
-            </div>
-
-            <div class="modal-section cfi">
-                <h4>Investing Activities (CFI)</h4>
-                <p>Cash flows related to the **purchase or sale of long-term assets** (like Property, Plant, and Equipment - PP&E) and long-term investments in other companies or securities. Essentially, transactions affecting non-current assets.</p>
-            </div>
-
-            <div class="modal-section cff">
-                <h4>Financing Activities (CFF)</h4>
-                <p>Cash flows related to transactions with **owners (shareholders)** and **creditors (lenders)**. This includes issuing stock/debt (inflows) and paying dividends, repaying debt principal, or buying back stock (outflows).</p>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // --- Game Data ---
-        const ALL_TRANSACTIONS = [
-            { desc: "Received cash from customers for services rendered.", cat: "Operating", exp: "Primary revenue-generating activity from the core business." },
-            { desc: "Paid wages and salaries to employees.", cat: "Operating", exp: "Normal, day-to-day business expense." },
-            { desc: "Paid a supplier for inventory.", cat: "Operating", exp: "Normal cost of goods sold/operations." },
-            { desc: "Paid interest on a bank loan or bond.", cat: "Operating", exp: "Interest is typically classified as a core operating expense." },
-            { desc: "Paid income taxes to the government.", cat: "Operating", exp: "Taxes are required for ongoing operations." },
-            { desc: "Increased Accounts Payable (purchased inventory on credit).", cat: "Operating", exp: "Change in a current liability related to operations." },
-            { desc: "Decrease in Accounts Receivable (collected customer debt).", cat: "Operating", exp: "Change in a current asset related to operations." },
-            { desc: "Increased Inventory (purchased more goods).", cat: "Operating", exp: "Change in a current asset related to operations." },
-            { desc: "Received a refund for prepaid insurance.", cat: "Operating", exp: "Change in a current asset related to operations." },
-            { desc: "Decrease in Unearned Revenue (service delivered to customer).", cat: "Operating", exp: "Change in a current liability related to operations." },
-            { desc: "Net Income (Starting point for Indirect Method).", cat: "Operating", exp: "The base figure before adjustments for non-cash items." },
-            { desc: "Collected cash from customers in advance (Unearned Revenue).", cat: "Operating", exp: "Change in a current liability related to operations." },
-            { desc: "Paid cash for utilities expense.", cat: "Operating", exp: "Normal, day-to-day business expense." },
-            { desc: "Increase in Prepaid Expenses (paid rent for next year).", cat: "Operating", exp: "Change in a current asset related to operations." },
-            { desc: "Decrease in Taxes Payable.", cat: "Operating", exp: "Change in a current liability related to operations." },
-            { desc: "Sale of a short-term investment security (trading security).", cat: "Operating", exp: "Sale of a highly liquid, near-cash investment." },
-            { desc: "Purchase of a short-term investment security.", cat: "Operating", exp: "Purchase of a highly liquid, near-cash investment." },
-            { desc: "Gain on Sale of Equipment (non-cash adjustment).", cat: "Operating", exp: "Non-cash item; subtracted from Net Income." },
-            { desc: "Amortization of a Patent (non-cash expense).", cat: "Operating", exp: "Non-cash item; added back to Net Income." },
-            { desc: "Received interest revenue from a bond investment.", cat: "Operating", exp: "While the bond is Investing, the *income* is often classified as Operating." },
-            
-            { desc: "Purchased a new piece of machinery for the factory.", cat: "Investing", exp: "Acquisition of a long-term asset (Property, Plant, & Equipment)." },
-            { desc: "Sold an old, unused delivery van for cash.", cat: "Investing", exp: "Sale of a long-term asset (PP&E)." },
-            { desc: "Purchased a patent (an intangible asset) from another company.", cat: "Investing", exp: "Acquisition of a long-term intangible asset." },
-            { desc: "Purchased bonds issued by another company (a long-term investment).", cat: "Investing", exp: "Acquisition of long-term non-operating financial assets." },
-            { desc: "Received cash from the sale of an office building.", cat: "Investing", exp: "Sale of a long-term asset." },
-            { desc: "Loaned money to another company.", cat: "Investing", exp: "Creation of a long-term asset (Note Receivable)." },
-            { desc: "Received repayment of a loan made to another company.", cat: "Investing", exp: "Collection of a long-term asset (Note Receivable)." },
-            { desc: "Paid cash to acquire another business.", cat: "Investing", exp: "Acquisition of a business is treated as an investing outflow." },
-            { desc: "Purchased land for future expansion.", cat: "Investing", exp: "Acquisition of a long-term asset." },
-            { desc: "Purchased a controlling interest in another company.", cat: "Investing", exp: "Acquisition of a long-term strategic asset." },
-            { desc: "Sale of a minority interest in a publicly traded company.", cat: "Investing", exp: "Sale of a long-term equity investment." },
-            { desc: "Cash paid to a vendor for a property acquisition.", cat: "Investing", exp: "Acquisition of a long-term asset." },
-            { desc: "Received cash from the government for an asset seizure.", cat: "Investing", exp: "Inflow from the disposal of a long-term asset." },
-            { desc: "Loaned money to a company officer.", cat: "Investing", exp: "Creation of a long-term asset (Note Receivable)." },
-            { desc: "Received cash as payment for insurance settlement on damaged equipment.", cat: "Investing", exp: "Inflow related to a long-term asset." },
-            { desc: "Paid for major overhaul of plant machinery (capitalized cost).", cat: "Investing", exp: "Investment in a long-term asset." },
-            
-            { desc: "Issued common stock to raise capital.", cat: "Financing", exp: "Relates to the company's equity capital structure." },
-            { desc: "Paid a dividend to shareholders.", cat: "Financing", exp: "Return of capital to equity holders." },
-            { desc: "Repaid the principal amount of a long-term bank loan.", cat: "Financing", exp: "Relates to the company's debt capital structure." },
-            { desc: "Borrowed money by issuing bonds payable.", cat: "Financing", exp: "Inflow from a long-term debt obligation." },
-            { desc: "Purchased the company's own shares (treasury stock).", cat: "Financing", exp: "Relates to the company's equity capital structure (buyback)." },
-            { desc: "Paid cash to retire a bond early.", cat: "Financing", exp: "Repayment of a debt obligation." },
-            { desc: "Received cash from issuing preferred stock.", cat: "Financing", exp: "Inflow from issuing equity." },
-            { desc: "Paid legal fees to register new stock.", cat: "Financing", exp: "Directly related to issuing equity." },
-            { desc: "Obtained a new long-term mortgage for a building.", cat: "Financing", exp: "Inflow from a long-term debt obligation." },
-            { desc: "Paid cash to reduce a line of credit principal.", cat: "Financing", exp: "Repayment of a borrowing." },
-            { desc: "Conversion of bonds to common stock (non-cash).", cat: "Financing", exp: "A non-cash transaction involving capital structure." },
-            { desc: "Paid cash to reduce long-term bonds payable.", cat: "Financing", exp: "Repayment of a long-term debt obligation." },
-            { desc: "Issued a short-term note payable.", cat: "Financing", exp: "Inflow from a borrowing." },
-            { desc: "Repaid a short-term note payable.", cat: "Financing", exp: "Repayment of a borrowing." },
-            { desc: "Payment of dividends on preferred stock.", cat: "Financing", exp: "Return of capital to equity holders." }
-        ];
-
-        // --- Game Variables ---
-        const QUESTION_COUNT = 20;
-        const POINTS_CORRECT = 2;
-        const POINTS_INCORRECT = -1; 
-        const POINTS_HINT_PENALTY = -2; 
+        <p>This intensive program is your dedicated roadmap to achieving a Band 9.0 in IELTS Writing Task 2. We do not just teach theory; we build Band 9 precision through systematic practice, advanced grammar mastery, and high-level, topic-specific vocabulary. Prepare for total mastery!</p>
         
-        let selectedQuestions = [];
-        let studentAnswers = []; 
-        let currentQuestionIndex = 0;
-        let reviewQuestionIndex = 0;
-        let studentName = "";
-        let score = 0;
+        <div class="prize-card">
+            <h3>Daily Excellence Checkpoint & The Grand Prize! 500,000 UZS</h3>
+            <p>Your effort is tracked every day! Students are assessed on 5 core criteria to ensure maximum progress. Collect these PLUS (+) points daily!</p>
+            <ul>
+                <li>? Punctuality & Presence: Coming to course on time (+)</li>
+                <li>? Target Writing: Writing essays 6+ (Meeting word count & task response minimums) (+)</li>
+                <li>? Discipline: Completing all tasks and homework by deadline (+)</li>
+                <li>? Lexical Stretch: Actively using 80% of new words and collocations learnt (+)</li>
+                <li>? Grammar Goals: Attempting and correcting complex grammar structures (+)</li>
+            </ul>
+            <p>The student with the most total (+) points will be crowned the Top Writer and receive a gift of 500,000 UZS at the final ceremony!</p>
+        </div>
 
-        // --- DOM Elements ---
-        const questionCard = document.getElementById('question-card');
-        const hintDisplay = document.getElementById('hint-display');
-        const categoryButtons = document.querySelectorAll('.action-buttons .category-btn');
-        const questionHintBtn = document.getElementById('question-hint-btn');
-        const questionNav = document.getElementById('question-nav');
-        const reviewNav = document.getElementById('review-nav');
+        <a href="vocabulary_bank.html" class="nav-link">Go to Vocabulary Bank (100 Collocations)</a>
+        
+        <h2>10-Lesson Mastery Journey: Detailed Breakdown</h2>
+        <hr>
+        
+        <ul class="lesson-list">
+            <li><a href="lesson1_detail.html">Lesson 1: Understanding Task 2 + Writing Power Intros</a></li>
+            <li><a href="lesson2_detail.html">Lesson 2: Developing Concrete Body Paragraphs</a></li>
+            <li><a href="lesson3_detail.html">Lesson 3: Writing Polished Conclusions & Improving Flow</a></li>
+            <li><a href="lesson4_detail.html">Lesson 4: Editing for Band 9 Precision</a></li>
+            <li><a href="lesson5_detail.html">Lesson 5: Opinion Essays (Agree/Disagree Type)</a></li>
+            <li><a href="lesson6_detail.html">Lesson 6: Discussion Essays (Both Views + Opinion)</a></li>
+            <li><a href="lesson7_detail.html">Lesson 7: Problem-Solution Essays</a></li>
+            <li><a href="lesson8_detail.html">Lesson 8: Advantages-Disadvantages Essays</a></li>
+            <li><a href="lesson9_detail.html">Lesson 9: Double Question Essays</a></li>
+            <li><a href="lesson10_detail.html">Lesson 10: Mock Writing Exam + Portfolio Review</a></li>
+        </ul>
+        
+    </div>
 
-        // --- Utility Functions ---
-        function shuffle(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-        }
-
-        function showScreen(id) {
-            document.getElementById('start-screen').classList.add('hidden');
-            document.getElementById('game-screen').classList.add('hidden');
-            document.getElementById('results-screen').classList.add('hidden');
-            document.getElementById('review-screen').classList.add('hidden');
-            document.getElementById(id).classList.remove('hidden');
-        }
-
-        function updateScoreboard() {
-            document.getElementById('display-student-name').textContent = studentName;
-            document.getElementById('current-q-num').textContent = currentQuestionIndex + 1;
-            document.getElementById('total-q-count').textContent = QUESTION_COUNT;
-            document.getElementById('score').textContent = score;
-            renderNavigationTable('game');
-        }
-
-        // --- Navigation Table Functions ---
-        function renderNavigationTable(mode) {
-            const navElement = mode === 'game' ? questionNav : reviewNav;
-            const currentIndex = mode === 'game' ? currentQuestionIndex : reviewQuestionIndex;
-            navElement.innerHTML = '';
-
-            for (let i = 0; i < QUESTION_COUNT; i++) {
-                const answerState = studentAnswers[i];
-                const btn = document.createElement('button');
-                btn.className = 'nav-btn';
-                btn.textContent = i + 1;
-                
-                if (mode === 'game') {
-                    btn.onclick = () => { currentQuestionIndex = i; loadQuestion(); };
-                } else {
-                    btn.onclick = () => { reviewQuestionIndex = i; loadReviewQuestion(); };
-                }
-
-                // Apply status class
-                if (i === currentIndex) {
-                    btn.classList.add('nav-current');
-                } else if (answerState.hintUsed) {
-                    btn.classList.add('nav-hinted');
-                } else if (answerState.isAnswered) {
-                    btn.classList.add(answerState.isCorrect ? 'nav-correct' : 'nav-incorrect');
-                } else {
-                    btn.classList.add('nav-unanswered');
-                }
-                
-                navElement.appendChild(btn);
-            }
-        }
-
-
-        // --- Game Flow Functions ---
-        function startQuiz() {
-            studentName = document.getElementById('student-name').value.trim();
-            if (studentName === "") {
-                alert("Please enter your name to start the quiz.");
-                return;
-            }
-
-            shuffle(ALL_TRANSACTIONS);
-            selectedQuestions = ALL_TRANSACTIONS.slice(0, QUESTION_COUNT);
-            
-            studentAnswers = Array(QUESTION_COUNT).fill(null).map((_, i) => ({
-                qIndex: i,
-                studentCat: null,
-                isCorrect: false,
-                isAnswered: false, 
-                hintUsed: false     
-            }));
-
-            currentQuestionIndex = 0;
-            score = 0;
-            showScreen('game-screen');
-            loadQuestion();
-        }
-
-        function toggleCategoryButtons(disabled) {
-            categoryButtons.forEach(btn => btn.disabled = disabled);
-        }
-
-        function loadQuestion() {
-            const q = selectedQuestions[currentQuestionIndex];
-            const answerState = studentAnswers[currentQuestionIndex];
-
-            // Update the question card
-            questionCard.textContent = `${currentQuestionIndex + 1}. ${q.desc}`;
-            
-            // Hide hint display and enable/disable hint button
-            hintDisplay.classList.add('hidden');
-            questionHintBtn.disabled = answerState.isAnswered || answerState.hintUsed;
-            questionHintBtn.style.opacity = answerState.isAnswered || answerState.hintUsed ? '0.5' : '1';
-            
-            // Remove feedback classes
-            questionCard.classList.remove('correct-feedback', 'incorrect-feedback');
-            
-            // Handle Lockout Logic
-            const isLocked = answerState.isAnswered || answerState.hintUsed;
-            toggleCategoryButtons(isLocked);
-
-            // Visually indicate the selected answer (if one exists)
-            categoryButtons.forEach(btn => {
-                btn.style.opacity = '1';
-                if (answerState.studentCat && btn.textContent.includes(answerState.studentCat)) {
-                    btn.style.opacity = '0.5'; 
-                }
-            });
-
-            // If question is already answered/hinted, show the explanation
-            if (answerState.isAnswered) {
-                const penaltyText = answerState.hintUsed ? `(Penalty Applied: ${POINTS_HINT_PENALTY} Pts)` : 
-                                  (!answerState.isCorrect ? `(Penalty Applied: ${POINTS_INCORRECT} Pts)` : `(+${POINTS_CORRECT} Pts)`);
-                
-                hintDisplay.innerHTML = `<strong>${answerState.isCorrect ? '✅ Correct' : '❌ Incorrect'} ${penaltyText}</strong> | 
-                                         <p><strong>Correct Category:</strong> ${q.cat}</p>
-                                         <p><strong>Explanation:</strong> ${q.exp}</p>`;
-                hintDisplay.classList.remove('hidden');
-            }
-
-            updateScoreboard();
-        }
-
-        function useQuestionHint() {
-            let answerState = studentAnswers[currentQuestionIndex];
-            
-            if (answerState.isAnswered || answerState.hintUsed) return;
-
-            const q = selectedQuestions[currentQuestionIndex];
-
-            // 1. Apply Penalty
-            score += POINTS_HINT_PENALTY;
-
-            // 2. Lock the Question and Hint button
-            answerState.hintUsed = true;
-            answerState.isAnswered = true; 
-            toggleCategoryButtons(true);
-            questionHintBtn.disabled = true;
-
-            // 3. Display Hint and lock for review
-            hintDisplay.innerHTML = `<strong>Hint Used (Penalty Applied: ${POINTS_HINT_PENALTY} Pts)</strong> | 
-                                     <p><strong>Explanation:</strong> ${q.exp}</p>`;
-            hintDisplay.classList.remove('hidden');
-
-            updateScoreboard();
-        }
-
-        function submitAnswer(category) {
-            const q = selectedQuestions[currentQuestionIndex];
-            const isCorrect = category === q.cat;
-            
-            let answerState = studentAnswers[currentQuestionIndex];
-
-            if (answerState.isAnswered) return;
-
-            // --- 1. Score Calculation ---
-            if (isCorrect) {
-                score += POINTS_CORRECT; 
-            } else {
-                score += POINTS_INCORRECT; // -1 point penalty
-            }
-
-            // --- 2. Lockout and State Update ---
-            answerState.studentCat = category;
-            answerState.isCorrect = isCorrect;
-            answerState.isAnswered = true; 
-            toggleCategoryButtons(true); 
-
-            // --- 3. Apply Animation Feedback & Show Explanation ---
-            questionCard.classList.remove('correct-feedback', 'incorrect-feedback'); 
-            if (isCorrect) {
-                questionCard.classList.add('correct-feedback');
-            } else {
-                questionCard.classList.add('incorrect-feedback');
-            }
-
-            const penaltyText = isCorrect ? `(+${POINTS_CORRECT} Pts)` : `(Penalty Applied: ${POINTS_INCORRECT} Pts)`;
-
-            hintDisplay.innerHTML = `<strong>${isCorrect ? '✅ Correct' : '❌ Incorrect'} ${penaltyText}</strong> | 
-                                     <p><strong>Correct Category:</strong> ${q.cat}</p>
-                                     <p><strong>Explanation:</strong> ${q.exp}</p>`;
-            hintDisplay.classList.remove('hidden');
-
-            // Move to the next question after a brief delay
-            setTimeout(() => {
-                let nextIndex = currentQuestionIndex + 1;
-                while (nextIndex < QUESTION_COUNT && studentAnswers[nextIndex].isAnswered) {
-                    nextIndex++;
-                }
-
-                if (nextIndex < QUESTION_COUNT) {
-                    currentQuestionIndex = nextIndex;
-                    loadQuestion();
-                } else {
-                    // Check if all answered, or just update UI for the last question
-                    loadQuestion(); 
-                }
-            }, 1000); 
-        }
-
-        // --- Results and Review Functions ---
-
-        function showResults() {
-            let correctCount = studentAnswers.filter(a => a.isCorrect).length;
-            let incorrectCount = studentAnswers.filter(a => a.isAnswered && !a.isCorrect && !a.hintUsed).length;
-            let hintedCount = studentAnswers.filter(a => a.hintUsed).length;
-            let finalScore = score;
-            
-            document.getElementById('results-student-name').textContent = studentName;
-            document.getElementById('final-score').textContent = finalScore;
-            document.getElementById('correct-count').textContent = correctCount;
-            document.getElementById('incorrect-count').textContent = incorrectCount;
-            document.getElementById('hinted-count').textContent = hintedCount;
-
-            showScreen('results-screen');
-        }
-
-        function startReviewScreen() {
-            reviewQuestionIndex = 0;
-            showScreen('review-screen');
-            loadReviewQuestion();
-        }
-
-        function loadReviewQuestion() {
-            const answerState = studentAnswers[reviewQuestionIndex];
-            const q = selectedQuestions[reviewQuestionIndex];
-            
-            const reviewStatusElement = document.getElementById('review-status');
-            const statusClasses = ['status-correct', 'status-incorrect', 'status-hinted', 'status-unanswered'];
-            
-            // Determine Status and Points
-            let statusText = '🚫 Unanswered';
-            let statusClass = 'status-unanswered';
-            let points = '0 Pts';
-
-            if (answerState.hintUsed) {
-                statusText = '⚠️ Hint Used';
-                statusClass = 'status-hinted';
-                points = `${POINTS_HINT_PENALTY} Pts`;
-            } else if (answerState.isAnswered) {
-                if (answerState.isCorrect) {
-                    statusText = '✅ Correct';
-                    statusClass = 'status-correct';
-                    points = `+${POINTS_CORRECT} Pts`;
-                } else {
-                    statusText = '❌ Incorrect';
-                    statusClass = 'status-incorrect';
-                    points = `${POINTS_INCORRECT} Pts`;
-                }
-            }
-            
-            // Update Review Card
-            document.getElementById('review-q-title').textContent = `Q${reviewQuestionIndex + 1}: ${q.desc}`;
-            
-            reviewStatusElement.textContent = `Status: ${statusText} (${points})`;
-            reviewStatusElement.classList.remove(...statusClasses);
-            reviewStatusElement.classList.add(statusClass);
-
-            document.getElementById('review-your-answer').textContent = answerState.studentCat || 'N/A';
-            document.getElementById('review-correct-answer').textContent = q.cat;
-            document.getElementById('review-explanation').textContent = q.exp;
-
-            // Update Review Navigation
-            renderNavigationTable('review');
-        }
-
-        // --- Modal Functions (Definitions) ---
-        function showDefinitionModal() {
-            document.getElementById('help-modal').classList.remove('hidden');
-        }
-
-        function closeHelpModal(event) {
-            if (event.target.classList.contains('modal') || event.target.classList.contains('close-btn')) {
-                document.getElementById('help-modal').classList.add('hidden');
-            }
-        }
-
-        // Initialize with the start screen
-        document.addEventListener('DOMContentLoaded', () => {
-            showScreen('start-screen');
-        });
-    </script>
 </body>
 </html>
